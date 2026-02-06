@@ -475,7 +475,7 @@ function Badge({ children, color }) {
 // ─── TEMPLATE SELECTOR ──────────────────────────────────────────────────────
 function TemplateSelector({ onSelect }) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(190px, 1fr))", gap: 12 }}>
+    <div className="template-grid">
       {Object.entries(TEMPLATES).map(([key, t]) => (
         <button key={key} onClick={() => onSelect(key)} style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20, cursor: "pointer", textAlign: "left", transition: "all 0.2s",
@@ -526,12 +526,12 @@ function Step1Revenue({ model, setModel }) {
               <Btn onClick={() => rem(i)} small danger>✕</Btn>
             </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, marginBottom: 8 }}>
+          <div className="input-grid-3" style={{ marginBottom: 8 }}>
             <Input label="Price per Unit (£)" value={s.pricePerUnit} onChange={v => upd(i, "pricePerUnit", v)} step={1} />
             <Input label="Units per Transaction" value={s.unitsPerTransaction} onChange={v => upd(i, "unitsPerTransaction", v)} step={0.1} min={0.1} />
             <Input label="Frequency (per year)" value={s.frequencyPerYear} onChange={v => upd(i, "frequencyPerYear", v)} step={1} min={1} />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
+          <div className="input-grid-3">
             <Input label="Initial Customers" value={s.initialCustomers} onChange={v => upd(i, "initialCustomers", v)} step={1} min={0} />
             <Input label="Monthly Customer Growth (%)" value={s.customerGrowthRate} onChange={v => upd(i, "customerGrowthRate", v)} step={0.5} />
             <Input label="Monthly Churn (%)" value={s.churnRate} onChange={v => upd(i, "churnRate", v)} step={0.1} min={0} />
@@ -699,7 +699,7 @@ function Step4Funding({ model, setModel, fundingGap }) {
             = {model.workingCapital.daysReceivable}d receivables + {model.workingCapital.daysInventory||0}d inventory − {weightedDaysPayable.toFixed(0)}d wtd payables
           </span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+        <div className="grid-2-col" style={{ gap: 10 }}>
           <Input label="Days Receivable (customer payment terms)" value={model.workingCapital.daysReceivable} onChange={v => setModel(m => ({ ...m, workingCapital: { ...m.workingCapital, daysReceivable: v } }))} min={0} max={120} />
           <Input label="Days Inventory" value={model.workingCapital.daysInventory || 0} onChange={v => setModel(m => ({ ...m, workingCapital: { ...m.workingCapital, daysInventory: v } }))} min={0} max={120} />
         </div>
@@ -883,7 +883,7 @@ function ProjectionsTab({ model }) {
         </ResponsiveContainer>
       </Card>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+      <div className="grid-2-col">
         <Card>
           <Hdr sub="Cash position including WC effects and debt service">Cash Flow</Hdr>
           <ResponsiveContainer width="100%" height={260}>
@@ -1115,7 +1115,7 @@ function ProjectionsTab({ model }) {
       {/* Balance Sheet */}
       <Card>
         <Hdr sub="End-of-year balance sheet — Assets = Liabilities + Equity">Balance Sheet</Hdr>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18, marginBottom: 18 }}>
+        <div className="grid-2-col" style={{ marginBottom: 18 }}>
           <div>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={annualData} stackOffset="sign">
@@ -1267,7 +1267,7 @@ function ScenarioTab({ model }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
       <Card>
         <Hdr sub="Adjust parameters relative to your base case">Scenario Parameters</Hdr>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 22 }}>
+        <div className="scenario-grid">
           <div>
             <div style={{ fontSize: 12, fontWeight: 600, color: C.step[0], marginBottom: 10 }}>📈 Revenue Levers</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -1297,7 +1297,7 @@ function ScenarioTab({ model }) {
         </div>
       </Card>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 10 }}>
+      <div className="grid-5-col">
         <Metric label="Y5 Revenue" value={fmtC((sf?.revenue||0)*12)} sub={`Base: ${fmtC((bf?.revenue||0)*12)}`} color={C.success} />
         <Metric label="Y5 EBIT" value={fmtC((sf?.ebit||0)*12)} sub={`Base: ${fmtC((bf?.ebit||0)*12)}`} color={C.purple} />
         <Metric label="Break-Even" value={scenario.breakevenMonth?`Mo ${scenario.breakevenMonth}`:"N/A"} sub={`Base: ${base.breakevenMonth?`Mo ${base.breakevenMonth}`:"N/A"}`} color={C.accent} />
@@ -1305,7 +1305,7 @@ function ScenarioTab({ model }) {
         <Metric label="Funding Gap" value={scenario.fundingGap>0?fmtC(scenario.fundingGap):"None"} sub={`Base: ${base.fundingGap>0?fmtC(base.fundingGap):"None"}`} color={scenario.fundingGap>0?C.danger:C.success} />
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 18 }}>
+      <div className="grid-3-col">
         <Card>
           <Hdr sub="Base vs scenario">Revenue</Hdr>
           <ResponsiveContainer width="100%" height={250}>
@@ -1398,7 +1398,7 @@ function MonteCarloTab({ model }) {
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
       <Card>
         <Hdr sub="Set volatility to stress-test stochastically">Simulation Configuration</Hdr>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22 }}>
+        <div className="mc-controls">
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <Slider label="Runs" value={numRuns} onChange={setNumRuns} min={100} max={2000} step={100} suffix="" color={C.accent} />
             <Slider label="Growth Volatility" value={vol.growthVol} onChange={v=>setVol(x=>({...x,growthVol:v}))} min={5} max={80} color={C.success} />
@@ -1415,7 +1415,7 @@ function MonteCarloTab({ model }) {
       </Card>
 
       {results && stats && (<>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(155px, 1fr))", gap: 10 }}>
+        <div className="metrics-grid">
           <Metric label="Survival Rate" value={fmtP(stats.survivalRate)} sub={`${(stats.defaultRate*100).toFixed(1)}% default risk`} icon="🛡️" color={stats.survivalRate>0.7?C.success:C.danger} />
           <Metric label="Break-Even Prob." value={fmtP(stats.breakevenProb)} sub={stats.medianBE?`Median: Mo ${stats.medianBE.toFixed(0)}`:""} icon="⚖️" color={stats.breakevenProb>0.7?C.success:C.warning} />
           <Metric label="Median IRR" value={`${(stats.medianIRR*100).toFixed(1)}%`} sub={`P10–P90: ${(stats.p10IRR*100).toFixed(0)}%–${(stats.p90IRR*100).toFixed(0)}%`} icon="📊" color={stats.medianIRR>0.15?C.success:C.warning} />
@@ -1423,7 +1423,7 @@ function MonteCarloTab({ model }) {
           <Metric label="Mean Y5 Revenue" value={fmtC(stats.meanY5Rev)} sub={`P10–P90: ${fmtC(stats.p10Y5Rev)}–${fmtC(stats.p90Y5Rev)}`} icon="🎯" color={C.cyan} />
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }}>
+        <div className="grid-2-col">
           {[
             { title: "Break-Even Timing", sub: `${(stats.breakevenProb*100).toFixed(0)}% reach break-even`, data: dists.be, posColor: C.success },
             { title: "IRR Distribution", sub: `Median: ${(stats.medianIRR*100).toFixed(1)}%`, data: dists.irr, splitZero: true },
@@ -1529,20 +1529,20 @@ export default function FinancialModelSimulator() {
   return (
     <div style={{ background: C.bg, minHeight: "100vh", color: C.text, fontFamily: fonts }}>
       <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      <div style={{ borderBottom: `1px solid ${C.border}`, padding: "10px 22px", display: "flex", alignItems: "center", justifyContent: "space-between", background: C.card, position: "sticky", top: 0, zIndex: 100 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div className="app-header" style={{ borderBottom: `1px solid ${C.border}`, background: C.card, position: "sticky", top: 0, zIndex: 100 }}>
+        <div className="app-header-title">
           <span style={{ fontSize: 11, color: C.accent, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Financial Model Simulator</span>
-          {tmplKey && <span style={{ fontSize: 11, color: C.dim, padding: "2px 8px", background: C.bg, borderRadius: 4 }}>{TEMPLATES[tmplKey]?.icon} {TEMPLATES[tmplKey]?.name}</span>}
+          {tmplKey && <span className="hide-mobile" style={{ fontSize: 11, color: C.dim, padding: "2px 8px", background: C.bg, borderRadius: 4 }}>{TEMPLATES[tmplKey]?.icon} {TEMPLATES[tmplKey]?.name}</span>}
         </div>
         <button onClick={() => { setModel(null); setTmplKey(null); setTab("builder"); }} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 11, cursor: "pointer" }}>↩ New Model</button>
       </div>
-      <div style={{ padding: "10px 22px", display: "flex", gap: 7, borderBottom: `1px solid ${C.border}`, overflowX: "auto" }}>
+      <div className="tab-nav" style={{ borderBottom: `1px solid ${C.border}` }}>
         <TabBtn active={tab==="builder"} onClick={()=>setTab("builder")} icon="🔧" color={C.accent}>Model Builder</TabBtn>
         <TabBtn active={tab==="projections"} onClick={()=>setTab("projections")} icon="📈" color={C.success}>5-Year Projections</TabBtn>
         <TabBtn active={tab==="scenarios"} onClick={()=>setTab("scenarios")} icon="🔀" color={C.purple}>Scenario Explorer</TabBtn>
         <TabBtn active={tab==="montecarlo"} onClick={()=>setTab("montecarlo")} icon="🎲" color={C.warning}>Monte Carlo</TabBtn>
       </div>
-      <div style={{ maxWidth: 1100, margin: "0 auto", padding: 22 }}>
+      <div className="main-content" style={{ maxWidth: 1100, margin: "0 auto" }}>
         {tab==="builder" && <ModelBuilderTab model={model} setModel={setModel} />}
         {tab==="projections" && <ProjectionsTab model={model} />}
         {tab==="scenarios" && <ScenarioTab model={model} />}
