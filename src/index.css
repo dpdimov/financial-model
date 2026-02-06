@@ -315,11 +315,11 @@ body {
 }
 
 .scroll-x::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.05);
   border-radius: 3px;
 }
 
 .scroll-x::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.15);
   border-radius: 3px;
 }

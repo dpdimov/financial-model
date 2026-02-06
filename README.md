@@ -2,8 +2,6 @@
 
 An interactive 5-year financial planning tool for entrepreneurship education, built as a React application. Students build financial models by following a structured four-step process — from revenue decomposition through to funding requirements — and then explore scenarios and run Monte Carlo simulations to stress-test their assumptions.
 
-Developed for the **V-733-ENTR Entrepreneurial Finance** course at the University of Bath School of Management.
-
 ---
 
 ## Pedagogical Framework
@@ -172,4 +170,4 @@ These are deliberate simplifications for pedagogical clarity. The goal is to tea
 
 **Version**: 3.0
 **Last Updated**: February 2026
-**University of Bath School of Management**
+**Professor Dimo Dimov**

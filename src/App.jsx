@@ -3,13 +3,13 @@ import { LineChart, Line, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Cartesia
 
 // ─── COLOUR PALETTE ──────────────────────────────────────────────────────────
 const C = {
-  bg: "#0A0E19", card: "#111827", cardAlt: "#0F1525", border: "#1E2A3F", borderLight: "#2A3A55",
-  accent: "#3B82F6", accentDim: "#1E3A5F", success: "#10B981", successDim: "#064E3B",
-  danger: "#EF4444", dangerDim: "#7F1D1D", warning: "#F59E0B", warningDim: "#78350F",
-  purple: "#8B5CF6", purpleDim: "#4C1D95", cyan: "#06B6D4", cyanDim: "#164E63",
-  text: "#E2E8F0", muted: "#94A3B8", dim: "#64748B",
-  ch: ["#3B82F6","#10B981","#8B5CF6","#F59E0B","#06B6D4","#EF4444","#EC4899","#14B8A6"],
-  step: ["#3B82F6","#8B5CF6","#F59E0B","#10B981"],
+  bg: "#F8FAFC", card: "#FFFFFF", cardAlt: "#F1F5F9", border: "#E2E8F0", borderLight: "#CBD5E1",
+  accent: "#2563EB", accentDim: "#DBEAFE", success: "#059669", successDim: "#D1FAE5",
+  danger: "#DC2626", dangerDim: "#FEE2E2", warning: "#D97706", warningDim: "#FEF3C7",
+  purple: "#7C3AED", purpleDim: "#EDE9FE", cyan: "#0891B2", cyanDim: "#CFFAFE",
+  text: "#1E293B", muted: "#475569", dim: "#94A3B8",
+  ch: ["#2563EB","#059669","#7C3AED","#D97706","#0891B2","#DC2626","#DB2777","#0D9488"],
+  step: ["#2563EB","#7C3AED","#D97706","#059669"],
 };
 
 const fmt = (n) => { if(n==null) return "—"; const a=Math.abs(n); if(a>=1e6) return `${(n/1e6).toFixed(1)}M`; if(a>=1e3) return `${(n/1e3).toFixed(1)}K`; return n.toFixed(0); };
@@ -393,15 +393,15 @@ function runMonteCarlo(model, numRuns = 500, vol = {}, defThreshold = 50) {
 // ─── UI PRIMITIVES ───────────────────────────────────────────────────────────
 const fonts = "'Instrument Sans','SF Pro Display',-apple-system,sans-serif";
 const mono = "'JetBrains Mono',monospace";
-const ttStyle = { background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 11 };
+const ttStyle = { background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 8, fontSize: 13, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" };
 
 function Metric({ label, value, sub, color = C.accent, icon }) {
   return (
     <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: "14px 18px", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: color, opacity: 0.7 }} />
-      <div style={{ fontSize: 11, color: C.muted, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 5 }}>{icon && <span style={{ marginRight: 5 }}>{icon}</span>}{label}</div>
-      <div style={{ fontSize: 21, fontWeight: 700, color: C.text, fontFamily: mono }}>{value}</div>
-      {sub && <div style={{ fontSize: 10, color: C.dim, marginTop: 3 }}>{sub}</div>}
+      <div style={{ fontSize: 13, color: C.muted, textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 5 }}>{icon && <span style={{ marginRight: 5 }}>{icon}</span>}{label}</div>
+      <div style={{ fontSize: 24, fontWeight: 700, color: C.text, fontFamily: mono }}>{value}</div>
+      {sub && <div style={{ fontSize: 12, color: C.dim, marginTop: 3 }}>{sub}</div>}
     </div>
   );
 }
@@ -410,9 +410,9 @@ function Input({ label, value, onChange, type = "number", step, min, max, suffix
   if (options) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 3, ...sx }}>
-        {label && <label style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</label>}
+        {label && <label style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</label>}
         <select value={value} onChange={e => onChange(e.target.value)}
-          style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, padding: "6px 10px", color: C.text, fontSize: 12, outline: "none" }}>
+          style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 7, padding: "6px 10px", color: C.text, fontSize: 14, outline: "none" }}>
           {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       </div>
@@ -420,11 +420,11 @@ function Input({ label, value, onChange, type = "number", step, min, max, suffix
   }
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 3, ...sx }}>
-      {label && <label style={{ fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</label>}
+      {label && <label style={{ fontSize: 12, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em" }}>{label}</label>}
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
         <input type={type} value={value} onChange={e => onChange(type === "number" ? parseFloat(e.target.value) || 0 : e.target.value)} step={step} min={min} max={max}
-          style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, padding: "6px 10px", color: C.text, fontSize: 12, fontFamily: mono, width: "100%", outline: "none" }} />
-        {suffix && <span style={{ fontSize: 10, color: C.dim, whiteSpace: "nowrap" }}>{suffix}</span>}
+          style={{ background: "#FFFFFF", border: `1px solid ${C.border}`, borderRadius: 7, padding: "6px 10px", color: C.text, fontSize: 14, fontFamily: mono, width: "100%", outline: "none" }} />
+        {suffix && <span style={{ fontSize: 12, color: C.dim, whiteSpace: "nowrap" }}>{suffix}</span>}
       </div>
     </div>
   );
@@ -434,8 +434,8 @@ function Slider({ label, value, onChange, min = 0, max = 100, step = 1, suffix =
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <span style={{ fontSize: 12, color: C.muted }}>{label}</span>
-        <span style={{ fontSize: 12, color: C.text, fontFamily: mono, fontWeight: 600 }}>{value}{suffix}</span>
+        <span style={{ fontSize: 14, color: C.muted }}>{label}</span>
+        <span style={{ fontSize: 14, color: C.text, fontFamily: mono, fontWeight: 600 }}>{value}{suffix}</span>
       </div>
       <input type="range" value={value} onChange={e => onChange(parseFloat(e.target.value))} min={min} max={max} step={step}
         style={{ width: "100%", accentColor: color, height: 4 }} />
@@ -443,33 +443,33 @@ function Slider({ label, value, onChange, min = 0, max = 100, step = 1, suffix =
   );
 }
 
-function Card({ children, style }) { return <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 22, ...style }}>{children}</div>; }
+function Card({ children, style }) { return <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 22, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", ...style }}>{children}</div>; }
 function Hdr({ children, sub, color }) {
-  return (<div style={{ marginBottom: 14 }}><h3 style={{ fontSize: 15, fontWeight: 600, color: color || C.text, margin: 0 }}>{children}</h3>{sub && <p style={{ fontSize: 11, color: C.dim, margin: "3px 0 0 0" }}>{sub}</p>}</div>);
+  return (<div style={{ marginBottom: 14 }}><h3 style={{ fontSize: 17, fontWeight: 600, color: color || C.text, margin: 0 }}>{children}</h3>{sub && <p style={{ fontSize: 13, color: C.dim, margin: "3px 0 0 0" }}>{sub}</p>}</div>);
 }
 function Btn({ children, onClick, small, color = C.accent, danger, primary, disabled, style: sx }) {
   return (<button onClick={onClick} disabled={disabled} style={{
     background: primary ? `linear-gradient(135deg,${C.accent},${C.purple})` : danger ? C.dangerDim : "transparent",
-    color: primary ? "#fff" : danger ? C.danger : color, border: primary ? "none" : `1px solid ${danger ? C.danger+"40" : color+"40"}`,
-    borderRadius: small ? 6 : 10, padding: small ? "4px 10px" : "10px 20px", fontSize: small ? 11 : 13,
+    color: primary ? "#fff" : danger ? C.danger : color, border: primary ? "none" : `1px solid ${danger ? C.danger+"60" : color+"50"}`,
+    borderRadius: small ? 6 : 10, padding: small ? "4px 10px" : "10px 20px", fontSize: small ? 12 : 14,
     cursor: disabled ? "not-allowed" : "pointer", fontWeight: primary ? 600 : 500, opacity: disabled ? 0.5 : 1, ...sx,
   }}>{children}</button>);
 }
 function TabBtn({ active, onClick, children, icon, color }) {
   return (<button onClick={onClick} style={{
-    background: active ? (color || C.accent) : "transparent", color: active ? "#fff" : C.muted,
-    border: active ? "none" : `1px solid ${C.border}`, borderRadius: 10, padding: "10px 18px", fontSize: 13,
+    background: active ? (color || C.accent) : "transparent", color: active ? "#fff" : C.text,
+    border: active ? "none" : `1px solid ${C.border}`, borderRadius: 10, padding: "10px 18px", fontSize: 14,
     fontWeight: active ? 600 : 400, cursor: "pointer", display: "flex", alignItems: "center", gap: 7, whiteSpace: "nowrap",
-  }}>{icon && <span style={{ fontSize: 15 }}>{icon}</span>}{children}</button>);
+  }}>{icon && <span style={{ fontSize: 16 }}>{icon}</span>}{children}</button>);
 }
 function StepInd({ number, label, color, active }) {
-  return (<div style={{ display: "flex", alignItems: "center", gap: 10, opacity: active ? 1 : 0.5, cursor: "pointer" }}>
-    <div style={{ width: 28, height: 28, borderRadius: "50%", background: active ? color : "transparent", border: `2px solid ${color}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: active ? "#fff" : color }}>{number}</div>
-    <span style={{ fontSize: 12, color: active ? C.text : C.dim, fontWeight: active ? 600 : 400 }}>{label}</span>
+  return (<div style={{ display: "flex", alignItems: "center", gap: 10, opacity: active ? 1 : 0.6, cursor: "pointer" }}>
+    <div style={{ width: 28, height: 28, borderRadius: "50%", background: active ? color : "transparent", border: `2px solid ${color}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: active ? "#fff" : color }}>{number}</div>
+    <span style={{ fontSize: 14, color: active ? C.text : C.muted, fontWeight: active ? 600 : 400 }}>{label}</span>
   </div>);
 }
 function Badge({ children, color }) {
-  return <span style={{ fontSize: 9, padding: "2px 6px", borderRadius: 4, background: color + "20", color: color, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>{children}</span>;
+  return <span style={{ fontSize: 11, padding: "2px 6px", borderRadius: 4, background: color + "20", color: color, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em" }}>{children}</span>;
 }
 
 // ─── TEMPLATE SELECTOR ──────────────────────────────────────────────────────
@@ -480,12 +480,12 @@ function TemplateSelector({ onSelect }) {
         <button key={key} onClick={() => onSelect(key)} style={{
           background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20, cursor: "pointer", textAlign: "left", transition: "all 0.2s",
         }}
-          onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.background = "#1A2035"; }}
+          onMouseEnter={e => { e.currentTarget.style.borderColor = C.accent; e.currentTarget.style.background = "#EFF6FF"; }}
           onMouseLeave={e => { e.currentTarget.style.borderColor = C.border; e.currentTarget.style.background = C.card; }}
         >
           <div style={{ fontSize: 28, marginBottom: 8 }}>{t.icon}</div>
-          <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 4 }}>{t.name}</div>
-          <div style={{ fontSize: 11, color: C.dim }}>{t.desc}</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: C.text, marginBottom: 4 }}>{t.name}</div>
+          <div style={{ fontSize: 13, color: C.dim }}>{t.desc}</div>
         </button>
       ))}
     </div>
@@ -509,20 +509,20 @@ function Step1Revenue({ model, setModel }) {
         <Btn onClick={add} small>+ Add Stream</Btn>
       </div>
       <div style={{ background: C.step[0]+"10", border: `1px solid ${C.step[0]}25`, borderRadius: 10, padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "center", gap: 12 }}>
-        <div style={{ fontSize: 12, color: C.step[0], fontFamily: mono, fontWeight: 500 }}>
+        <div style={{ fontSize: 14, color: C.step[0], fontFamily: mono, fontWeight: 500 }}>
           Revenue = <span style={{ color: C.ch[1] }}>Customers</span> × <span style={{ color: C.ch[2] }}>Units/Txn</span> × <span style={{ color: C.ch[3] }}>Price</span> × <span style={{ color: C.ch[4] }}>Frequency</span>
         </div>
-        <div style={{ marginLeft: "auto", fontSize: 13, color: C.text, fontFamily: mono, fontWeight: 700 }}>Year 1: {fmtC(totalYear1)}</div>
+        <div style={{ marginLeft: "auto", fontSize: 15, color: C.text, fontFamily: mono, fontWeight: 700 }}>Year 1: {fmtC(totalYear1)}</div>
       </div>
       {model.revenueStreams.map((s, i) => (
         <div key={i} style={{ background: C.bg, borderRadius: 10, padding: 16, marginBottom: 10, border: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <div style={{ width: 4, height: 20, borderRadius: 2, background: C.ch[i % C.ch.length] }} />
-              <input value={s.name} onChange={e => upd(i, "name", e.target.value)} style={{ background: "transparent", border: "none", color: C.text, fontSize: 14, fontWeight: 600, outline: "none" }} />
+              <input value={s.name} onChange={e => upd(i, "name", e.target.value)} style={{ background: "transparent", border: "none", color: C.text, fontSize: 16, fontWeight: 600, outline: "none" }} />
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span style={{ fontSize: 12, color: C.ch[i % C.ch.length], fontFamily: mono, fontWeight: 600 }}>Year 1: {fmtC(previews[i])}</span>
+              <span style={{ fontSize: 14, color: C.ch[i % C.ch.length], fontFamily: mono, fontWeight: 600 }}>Year 1: {fmtC(previews[i])}</span>
               <Btn onClick={() => rem(i)} small danger>✕</Btn>
             </div>
           </div>
@@ -559,7 +559,7 @@ function Step2Assets({ model, setModel }) {
       <Hdr color={C.step[1]} sub="What activities does revenue generation require? What operating assets need to be in place?">
         <span style={{ marginRight: 8, fontSize: 18 }}>🏗️</span>Step 2: Operating Assets & Activities
       </Hdr>
-      <div style={{ background: C.step[1]+"10", border: `1px solid ${C.step[1]}25`, borderRadius: 10, padding: "12px 16px", marginBottom: 18, display: "flex", gap: 20, fontSize: 12 }}>
+      <div style={{ background: C.step[1]+"10", border: `1px solid ${C.step[1]}25`, borderRadius: 10, padding: "12px 16px", marginBottom: 18, display: "flex", gap: 20, fontSize: 14 }}>
         <span style={{ color: C.muted }}>Fixed depreciation: <strong style={{ color: C.text, fontFamily: mono }}>{fmtC(totalMonthlyFixed)}</strong>/mo</span>
         <span style={{ color: C.muted }}>Operating costs: <strong style={{ color: C.text, fontFamily: mono }}>{fmtC(totalMonthlyOp)}</strong>/mo</span>
         <span style={{ color: C.muted, marginLeft: "auto" }}>Total: <strong style={{ color: C.text, fontFamily: mono }}>{fmtC(totalMonthlyFixed + totalMonthlyOp)}</strong>/mo</span>
@@ -567,7 +567,7 @@ function Step2Assets({ model, setModel }) {
 
       {/* Fixed Assets */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: C.text }}>Fixed Assets (depreciated)</span>
+        <span style={{ fontSize: 15, fontWeight: 600, color: C.text }}>Fixed Assets (depreciated)</span>
         <Btn onClick={addFixed} small>+ Fixed Asset</Btn>
       </div>
       {fixedAssets.map((a) => {
@@ -579,8 +579,8 @@ function Step2Assets({ model, setModel }) {
               <Input label="Cost (£)" value={a.cost} onChange={v => upd(i, "cost", v)} step={1000} sx={{ flex: 1 }} />
               <Input label="Useful Life (yrs)" value={a.usefulLifeYears} onChange={v => upd(i, "usefulLifeYears", v)} min={1} sx={{ flex: 1 }} />
               <div style={{ display: "flex", flexDirection: "column", gap: 3, flex: 1 }}>
-                <label style={{ fontSize: 10, color: C.muted, textTransform: "uppercase" }}>Depr./mo</label>
-                <div style={{ padding: "6px 10px", fontSize: 12, fontFamily: mono, color: C.warning }}>{fmtC(a.cost / (a.usefulLifeYears * 12))}</div>
+                <label style={{ fontSize: 12, color: C.muted, textTransform: "uppercase" }}>Depr./mo</label>
+                <div style={{ padding: "6px 10px", fontSize: 14, fontFamily: mono, color: C.warning }}>{fmtC(a.cost / (a.usefulLifeYears * 12))}</div>
               </div>
               <Btn onClick={() => rem(i)} small danger>✕</Btn>
             </div>
@@ -591,8 +591,8 @@ function Step2Assets({ model, setModel }) {
       {/* Operating Costs with payment terms */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "18px 0 10px" }}>
         <div>
-          <span style={{ fontSize: 13, fontWeight: 600, color: C.text }}>Operating Costs</span>
-          <span style={{ fontSize: 10, color: C.dim, marginLeft: 8 }}>people, rent, services — each with payment terms</span>
+          <span style={{ fontSize: 15, fontWeight: 600, color: C.text }}>Operating Costs</span>
+          <span style={{ fontSize: 12, color: C.dim, marginLeft: 8 }}>people, rent, services — each with payment terms</span>
         </div>
         <Btn onClick={addOp} small>+ Operating Cost</Btn>
       </div>
@@ -606,15 +606,15 @@ function Step2Assets({ model, setModel }) {
               <Input label="Growth %/yr" value={a.growthRate} onChange={v => upd(i, "growthRate", v)} step={1} sx={{ flex: 0.7 }} />
               <Input label="Days Payable" value={a.daysPayable} onChange={v => upd(i, "daysPayable", v)} min={0} max={90} step={1} sx={{ flex: 0.7 }} />
               <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-                <label style={{ fontSize: 10, color: C.muted, textTransform: "uppercase" }}>Scales?</label>
+                <label style={{ fontSize: 12, color: C.muted, textTransform: "uppercase" }}>Scales?</label>
                 <button onClick={() => upd(i, "scaleWithRevenue", !a.scaleWithRevenue)} style={{
                   background: a.scaleWithRevenue ? C.successDim : C.bg, color: a.scaleWithRevenue ? C.success : C.dim,
-                  border: `1px solid ${a.scaleWithRevenue ? C.success+"50" : C.border}`, borderRadius: 6, padding: "5px 10px", fontSize: 10, cursor: "pointer",
+                  border: `1px solid ${a.scaleWithRevenue ? C.success+"50" : C.border}`, borderRadius: 6, padding: "5px 10px", fontSize: 12, cursor: "pointer",
                 }}>{a.scaleWithRevenue ? "Yes" : "No"}</button>
               </div>
               <Btn onClick={() => rem(i)} small danger>✕</Btn>
             </div>
-            {a.daysPayable === 0 && <div style={{ fontSize: 10, color: C.dim, marginTop: 4, paddingLeft: 4 }}>⚡ Paid immediately (e.g. payroll, direct debits)</div>}
+            {a.daysPayable === 0 && <div style={{ fontSize: 12, color: C.dim, marginTop: 4, paddingLeft: 4 }}>⚡ Paid immediately (e.g. payroll, direct debits)</div>}
           </div>
         );
       })}
@@ -634,7 +634,7 @@ function Step3Costs({ model, setModel }) {
       <Hdr color={C.step[2]} sub="Costs that scale directly with each unit of revenue (COGS, shipping, commissions)">
         <span style={{ marginRight: 8, fontSize: 18 }}>📊</span>Step 3: Variable Costs
       </Hdr>
-      <div style={{ background: C.step[2]+"10", border: `1px solid ${C.step[2]}25`, borderRadius: 10, padding: "12px 16px", marginBottom: 18, fontSize: 12 }}>
+      <div style={{ background: C.step[2]+"10", border: `1px solid ${C.step[2]}25`, borderRadius: 10, padding: "12px 16px", marginBottom: 18, fontSize: 14 }}>
         <span style={{ color: C.muted }}>Total variable cost: </span><strong style={{ color: C.text, fontFamily: mono }}>{totalVarPct.toFixed(1)}%</strong>
         <span style={{ color: C.muted, marginLeft: 12 }}>→ Contribution margin: </span>
         <strong style={{ color: totalVarPct < 60 ? C.success : C.danger, fontFamily: mono }}>{(100 - totalVarPct).toFixed(1)}%</strong>
@@ -679,23 +679,23 @@ function Step4Funding({ model, setModel, fundingGap }) {
       {fundingGap > 0 ? (
         <div style={{ background: C.dangerDim, border: `1px solid ${C.danger}40`, borderRadius: 10, padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 18 }}>⚠️</span>
-          <div><div style={{ fontSize: 13, color: C.danger, fontWeight: 600 }}>Funding Gap: {fmtC(fundingGap)}</div>
-          <div style={{ fontSize: 11, color: C.muted }}>Your model runs out of cash. Add funding or adjust the model.</div></div>
+          <div><div style={{ fontSize: 15, color: C.danger, fontWeight: 600 }}>Funding Gap: {fmtC(fundingGap)}</div>
+          <div style={{ fontSize: 13, color: C.muted }}>Your model runs out of cash. Add funding or adjust the model.</div></div>
         </div>
       ) : (
         <div style={{ background: C.successDim, border: `1px solid ${C.success}40`, borderRadius: 10, padding: "12px 16px", marginBottom: 18, display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 18 }}>✅</span>
-          <div style={{ fontSize: 13, color: C.success, fontWeight: 600 }}>Fully funded — no cash shortfall over 5 years.</div>
+          <div style={{ fontSize: 15, color: C.success, fontWeight: 600 }}>Fully funded — no cash shortfall over 5 years.</div>
         </div>
       )}
 
       {/* Working Capital */}
       <div style={{ marginBottom: 20 }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: C.text, marginBottom: 10 }}>Working Capital Cycle</div>
+        <div style={{ fontSize: 15, fontWeight: 600, color: C.text, marginBottom: 10 }}>Working Capital Cycle</div>
         <div style={{ background: C.step[3]+"10", border: `1px solid ${C.step[3]}25`, borderRadius: 10, padding: "14px 16px", marginBottom: 12, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <span style={{ fontSize: 11, color: C.muted }}>Cash Conversion Cycle:</span>
-          <span style={{ fontSize: 14, fontFamily: mono, fontWeight: 700, color: ccc <= 0 ? C.success : ccc < 30 ? C.warning : C.danger }}>{ccc.toFixed(0)} days</span>
-          <span style={{ fontSize: 10, color: C.dim }}>
+          <span style={{ fontSize: 13, color: C.muted }}>Cash Conversion Cycle:</span>
+          <span style={{ fontSize: 16, fontFamily: mono, fontWeight: 700, color: ccc <= 0 ? C.success : ccc < 30 ? C.warning : C.danger }}>{ccc.toFixed(0)} days</span>
+          <span style={{ fontSize: 12, color: C.dim }}>
             = {model.workingCapital.daysReceivable}d receivables + {model.workingCapital.daysInventory||0}d inventory − {weightedDaysPayable.toFixed(0)}d wtd payables
           </span>
         </div>
@@ -703,29 +703,29 @@ function Step4Funding({ model, setModel, fundingGap }) {
           <Input label="Days Receivable (customer payment terms)" value={model.workingCapital.daysReceivable} onChange={v => setModel(m => ({ ...m, workingCapital: { ...m.workingCapital, daysReceivable: v } }))} min={0} max={120} />
           <Input label="Days Inventory" value={model.workingCapital.daysInventory || 0} onChange={v => setModel(m => ({ ...m, workingCapital: { ...m.workingCapital, daysInventory: v } }))} min={0} max={120} />
         </div>
-        <div style={{ fontSize: 10, color: C.dim, marginTop: 8, padding: "0 4px" }}>
+        <div style={{ fontSize: 12, color: C.dim, marginTop: 8, padding: "0 4px" }}>
           💡 Supplier/operating cost payment terms are set per item in Step 2. Payroll at 0 days = paid immediately from cash.
         </div>
       </div>
 
       {/* Capital */}
-      <div style={{ fontSize: 13, fontWeight: 600, color: C.text, marginBottom: 10 }}>Capital Structure</div>
+      <div style={{ fontSize: 15, fontWeight: 600, color: C.text, marginBottom: 10 }}>Capital Structure</div>
       <div style={{ display: "flex", gap: 12, alignItems: "flex-end", marginBottom: 16 }}>
         <Input label="Initial Cash (£)" value={model.initialCash} onChange={v => setModel(m => ({ ...m, initialCash: v }))} step={10000} sx={{ flex: 1 }} />
         <div style={{ display: "flex", gap: 16 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <label style={{ fontSize: 10, color: C.muted, textTransform: "uppercase" }}>Total Equity</label>
-            <div style={{ padding: "6px 10px", fontSize: 14, fontFamily: mono, color: C.success, fontWeight: 600 }}>{fmtC(totalEquity)}</div>
+            <label style={{ fontSize: 12, color: C.muted, textTransform: "uppercase" }}>Total Equity</label>
+            <div style={{ padding: "6px 10px", fontSize: 16, fontFamily: mono, color: C.success, fontWeight: 600 }}>{fmtC(totalEquity)}</div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <label style={{ fontSize: 10, color: C.muted, textTransform: "uppercase" }}>Total Debt</label>
-            <div style={{ padding: "6px 10px", fontSize: 14, fontFamily: mono, color: C.warning, fontWeight: 600 }}>{fmtC(totalDebt)}</div>
+            <label style={{ fontSize: 12, color: C.muted, textTransform: "uppercase" }}>Total Debt</label>
+            <div style={{ padding: "6px 10px", fontSize: 16, fontFamily: mono, color: C.warning, fontWeight: 600 }}>{fmtC(totalDebt)}</div>
           </div>
         </div>
       </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-        <span style={{ fontSize: 12, color: C.muted }}>Funding Rounds</span>
+        <span style={{ fontSize: 14, color: C.muted }}>Funding Rounds</span>
         <div style={{ display: "flex", gap: 6 }}>
           <Btn onClick={() => addRound("equity")} small color={C.success}>+ Equity</Btn>
           <Btn onClick={() => addRound("debt")} small color={C.warning}>+ Debt</Btn>
@@ -736,7 +736,7 @@ function Step4Funding({ model, setModel, fundingGap }) {
           <div style={{ display: "flex", gap: 8, alignItems: "flex-end", flexWrap: "wrap" }}>
             <Input label="Name" value={r.name} onChange={v => updRound(i, "name", v)} type="text" sx={{ flex: 1.5 }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              <label style={{ fontSize: 10, color: C.muted, textTransform: "uppercase" }}>Type</label>
+              <label style={{ fontSize: 12, color: C.muted, textTransform: "uppercase" }}>Type</label>
               <Badge color={r.type === "debt" ? C.warning : C.success}>{r.type === "debt" ? "Debt" : "Equity"}</Badge>
             </div>
             <Input label="Month" value={r.month} onChange={v => updRound(i, "month", v)} min={1} max={60} sx={{ flex: 0.6 }} />
@@ -750,7 +750,7 @@ function Step4Funding({ model, setModel, fundingGap }) {
             <Btn onClick={() => remRound(i)} small danger>✕</Btn>
           </div>
           {r.type === "debt" && (
-            <div style={{ fontSize: 10, color: C.dim, marginTop: 6, paddingLeft: 4 }}>
+            <div style={{ fontSize: 12, color: C.dim, marginTop: 6, paddingLeft: 4 }}>
               Monthly: {fmtC(r.amount / (r.termMonths || 36))} principal + {fmtC(r.amount * (r.interestRate || 8) / 100 / 12)} interest (initial)
               = {fmtC(r.amount / (r.termMonths || 36) + r.amount * (r.interestRate || 8) / 100 / 12)} total payment
             </div>
@@ -870,10 +870,10 @@ function ProjectionsTab({ model }) {
         <ResponsiveContainer width="100%" height={320}>
           <ComposedChart data={qData}>
             <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-            <XAxis dataKey="label" tick={{ fontSize: 10, fill: C.dim }} interval={1} />
-            <YAxis tick={{ fontSize: 10, fill: C.dim }} tickFormatter={fmt} />
+            <XAxis dataKey="label" tick={{ fontSize: 12, fill: C.dim }} interval={1} />
+            <YAxis tick={{ fontSize: 12, fill: C.dim }} tickFormatter={fmt} />
             <Tooltip contentStyle={ttStyle} formatter={v => fmtC(v)} />
-            <Legend wrapperStyle={{ fontSize: 11 }} />
+            <Legend wrapperStyle={{ fontSize: 13 }} />
             <Area type="monotone" dataKey="revenue" name="Revenue" fill={C.success+"20"} stroke={C.success} strokeWidth={2} />
             <Area type="monotone" dataKey="totalCosts" name="Total Costs" fill={C.danger+"12"} stroke={C.danger} strokeWidth={2} />
             <Line type="monotone" dataKey="ebit" name="EBIT" stroke={C.purple} strokeWidth={2} dot={false} />
@@ -889,8 +889,8 @@ function ProjectionsTab({ model }) {
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={data.filter((_,i)=>i%3===0)}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.dim }} tickFormatter={v=>`M${v}`} />
-              <YAxis tick={{ fontSize: 10, fill: C.dim }} tickFormatter={fmt} />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: C.dim }} tickFormatter={v=>`M${v}`} />
+              <YAxis tick={{ fontSize: 12, fill: C.dim }} tickFormatter={fmt} />
               <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} labelFormatter={l=>`Month ${l}`} />
               <ReferenceLine y={0} stroke={C.dim} strokeDasharray="3 3" />
               <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={C.accent} stopOpacity={0.3}/><stop offset="95%" stopColor={C.accent} stopOpacity={0.02}/></linearGradient></defs>
@@ -904,8 +904,8 @@ function ProjectionsTab({ model }) {
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={data.filter((_,i)=>i%3===0)}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: C.dim }} tickFormatter={v=>`M${v}`} />
-              <YAxis tick={{ fontSize: 10, fill: C.dim }} tickFormatter={fmt} />
+              <XAxis dataKey="month" tick={{ fontSize: 12, fill: C.dim }} tickFormatter={v=>`M${v}`} />
+              <YAxis tick={{ fontSize: 12, fill: C.dim }} tickFormatter={fmt} />
               <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} labelFormatter={l=>`Month ${l}`} />
               <ReferenceLine y={0} stroke={C.dim} strokeDasharray="3 3" />
               <Area type="monotone" dataKey="netWorkingCapital" name="Net WC" fill={C.warning+"15"} stroke={C.warning} strokeWidth={2} />
@@ -918,10 +918,10 @@ function ProjectionsTab({ model }) {
       <Card>
         <Hdr sub="Year-by-year financial summary">Annual Summary</Hdr>
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 14 }}>
             <thead><tr style={{ borderBottom: `1px solid ${C.border}` }}>
               {["","Revenue","EBIT","Interest","Net Income","Op. CF","Cash","NWC","Debt","Customers"].map(h=>(
-                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 8px", color: C.muted, fontSize: 10, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
+                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 8px", color: C.muted, fontSize: 12, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
               ))}
             </tr></thead>
             <tbody>{annualData.map((r,i)=>(
@@ -946,74 +946,74 @@ function ProjectionsTab({ model }) {
       <Card>
         <Hdr sub="Annual income statement with gross and operating margins">Profit & Loss Statement</Hdr>
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead><tr style={{ borderBottom: `2px solid ${C.border}` }}>
               {["","Year 1","Year 2","Year 3","Year 4","Year 5"].map(h=>(
-                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 10px", color: C.muted, fontSize: 10, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
+                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 10px", color: C.muted, fontSize: 12, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
               ))}
             </tr></thead>
             <tbody>
               {/* Revenue */}
               <tr style={{ borderBottom: `1px solid ${C.border}20` }}>
                 <td style={{ padding: "8px 10px", fontWeight: 700, color: C.success }}>Revenue</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: C.success, fontSize: 11 }}>{fmtC(r.revenue)}</td>)}
+                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: C.success, fontSize: 13 }}>{fmtC(r.revenue)}</td>)}
               </tr>
               {/* COGS / Variable Costs */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Cost of Goods Sold</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.danger, fontSize: 11 }}>({fmtC(r.variableCosts)})</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Cost of Goods Sold</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.danger, fontSize: 13 }}>({fmtC(r.variableCosts)})</td>)}
               </tr>
               {/* Gross Profit */}
               <tr style={{ borderBottom: `2px solid ${C.border}40` }}>
-                <td style={{ padding: "6px 10px", fontWeight: 600, color: C.text, fontSize: 11 }}>Gross Profit</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 600, color: r.grossProfit>=0?C.text:C.danger, fontSize: 11 }}>{fmtC(r.grossProfit)}</td>)}
+                <td style={{ padding: "6px 10px", fontWeight: 600, color: C.text, fontSize: 13 }}>Gross Profit</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 600, color: r.grossProfit>=0?C.text:C.danger, fontSize: 13 }}>{fmtC(r.grossProfit)}</td>)}
               </tr>
               {/* Gross Margin % */}
               <tr style={{ borderBottom: `1px solid ${C.border}10`, background: C.bg }}>
-                <td style={{ padding: "4px 10px 4px 20px", color: C.dim, fontSize: 10, fontStyle: "italic" }}>Gross Margin %</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "4px 10px", textAlign: "right", fontFamily: mono, color: C.dim, fontSize: 10 }}>{r.revenue>0?fmtP(r.grossProfit/r.revenue):"—"}</td>)}
+                <td style={{ padding: "4px 10px 4px 20px", color: C.dim, fontSize: 12, fontStyle: "italic" }}>Gross Margin %</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "4px 10px", textAlign: "right", fontFamily: mono, color: C.dim, fontSize: 12 }}>{r.revenue>0?fmtP(r.grossProfit/r.revenue):"—"}</td>)}
               </tr>
               {/* Operating Expenses header */}
-              <tr><td colSpan={6} style={{ padding: "10px 10px 4px", fontSize: 11, fontWeight: 700, color: C.warning, textTransform: "uppercase", letterSpacing: "0.04em" }}>Operating Expenses</td></tr>
+              <tr><td colSpan={6} style={{ padding: "10px 10px 4px", fontSize: 13, fontWeight: 700, color: C.warning, textTransform: "uppercase", letterSpacing: "0.04em" }}>Operating Expenses</td></tr>
               {/* Operating Costs (excl depreciation) */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Operating Costs</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.warning, fontSize: 11 }}>({fmtC(r.operatingCosts - r.depreciation)})</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Operating Costs</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.warning, fontSize: 13 }}>({fmtC(r.operatingCosts - r.depreciation)})</td>)}
               </tr>
               {/* Depreciation */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Depreciation</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.purple, fontSize: 11 }}>({fmtC(r.depreciation)})</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Depreciation</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.purple, fontSize: 13 }}>({fmtC(r.depreciation)})</td>)}
               </tr>
               {/* Total Operating Expenses */}
               <tr style={{ borderBottom: `1px solid ${C.border}40` }}>
-                <td style={{ padding: "6px 10px", fontWeight: 500, color: C.muted, fontSize: 11 }}>Total Operating Expenses</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 500, color: C.muted, fontSize: 11 }}>({fmtC(r.operatingCosts)})</td>)}
+                <td style={{ padding: "6px 10px", fontWeight: 500, color: C.muted, fontSize: 13 }}>Total Operating Expenses</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 500, color: C.muted, fontSize: 13 }}>({fmtC(r.operatingCosts)})</td>)}
               </tr>
               {/* EBIT */}
               <tr style={{ borderBottom: `2px solid ${C.purple}40` }}>
-                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.purple, fontSize: 11 }}>EBIT (Operating Income)</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.ebit>=0?C.purple:C.danger, fontSize: 11 }}>{fmtC(r.ebit)}</td>)}
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.purple, fontSize: 13 }}>EBIT (Operating Income)</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.ebit>=0?C.purple:C.danger, fontSize: 13 }}>{fmtC(r.ebit)}</td>)}
               </tr>
               {/* Operating Margin % */}
               <tr style={{ borderBottom: `1px solid ${C.border}10`, background: C.bg }}>
-                <td style={{ padding: "4px 10px 4px 20px", color: C.dim, fontSize: 10, fontStyle: "italic" }}>Operating Margin %</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "4px 10px", textAlign: "right", fontFamily: mono, color: C.dim, fontSize: 10 }}>{r.revenue>0?fmtP(r.ebit/r.revenue):"—"}</td>)}
+                <td style={{ padding: "4px 10px 4px 20px", color: C.dim, fontSize: 12, fontStyle: "italic" }}>Operating Margin %</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "4px 10px", textAlign: "right", fontFamily: mono, color: C.dim, fontSize: 12 }}>{r.revenue>0?fmtP(r.ebit/r.revenue):"—"}</td>)}
               </tr>
               {/* Interest Expense */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Interest Expense</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.interest>0?C.warning:C.dim, fontSize: 11 }}>{r.interest>0?`(${fmtC(r.interest)})`:"—"}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Interest Expense</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.interest>0?C.warning:C.dim, fontSize: 13 }}>{r.interest>0?`(${fmtC(r.interest)})`:"—"}</td>)}
               </tr>
               {/* Net Income */}
               <tr style={{ borderBottom: `2px solid ${C.success}40`, background: C.cardAlt }}>
-                <td style={{ padding: "10px 10px", fontWeight: 700, color: C.text, fontSize: 12 }}>Net Income</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "10px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.netIncome>=0?C.success:C.danger, fontSize: 12 }}>{fmtC(r.netIncome)}</td>)}
+                <td style={{ padding: "10px 10px", fontWeight: 700, color: C.text, fontSize: 14 }}>Net Income</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "10px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.netIncome>=0?C.success:C.danger, fontSize: 14 }}>{fmtC(r.netIncome)}</td>)}
               </tr>
               {/* Net Margin % */}
               <tr style={{ background: C.bg }}>
-                <td style={{ padding: "4px 10px 4px 20px", color: C.dim, fontSize: 10, fontStyle: "italic" }}>Net Margin %</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "4px 10px", textAlign: "right", fontFamily: mono, color: C.dim, fontSize: 10 }}>{r.revenue>0?fmtP(r.netIncome/r.revenue):"—"}</td>)}
+                <td style={{ padding: "4px 10px 4px 20px", color: C.dim, fontSize: 12, fontStyle: "italic" }}>Net Margin %</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "4px 10px", textAlign: "right", fontFamily: mono, color: C.dim, fontSize: 12 }}>{r.revenue>0?fmtP(r.netIncome/r.revenue):"—"}</td>)}
               </tr>
             </tbody>
           </table>
@@ -1024,88 +1024,88 @@ function ProjectionsTab({ model }) {
       <Card>
         <Hdr sub="Annual cash flows from operating, investing, and financing activities">Cash Flow Statement</Hdr>
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead><tr style={{ borderBottom: `2px solid ${C.border}` }}>
               {["","Year 1","Year 2","Year 3","Year 4","Year 5"].map(h=>(
-                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 10px", color: C.muted, fontSize: 10, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
+                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 10px", color: C.muted, fontSize: 12, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
               ))}
             </tr></thead>
             <tbody>
               {/* Operating Activities header */}
-              <tr><td colSpan={6} style={{ padding: "10px 10px 4px", fontSize: 11, fontWeight: 700, color: C.accent, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Flows from Operating Activities</td></tr>
+              <tr><td colSpan={6} style={{ padding: "10px 10px 4px", fontSize: 13, fontWeight: 700, color: C.accent, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Flows from Operating Activities</td></tr>
               {/* Net Income */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Net Income</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.netIncome>=0?C.success:C.danger, fontSize: 11 }}>{fmtC(r.netIncome)}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Net Income</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.netIncome>=0?C.success:C.danger, fontSize: 13 }}>{fmtC(r.netIncome)}</td>)}
               </tr>
               {/* Add: Depreciation */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Add: Depreciation</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.purple, fontSize: 11 }}>{fmtC(r.depreciation)}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Add: Depreciation</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.purple, fontSize: 13 }}>{fmtC(r.depreciation)}</td>)}
               </tr>
               {/* Less: Change in Working Capital */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Less: Change in Working Capital</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.wcChange>0?C.danger:C.success, fontSize: 11 }}>{r.wcChange>0?`(${fmtC(r.wcChange)})`:fmtC(-r.wcChange)}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Less: Change in Working Capital</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.wcChange>0?C.danger:C.success, fontSize: 13 }}>{r.wcChange>0?`(${fmtC(r.wcChange)})`:fmtC(-r.wcChange)}</td>)}
               </tr>
               {/* Operating Cash Flow */}
               <tr style={{ borderBottom: `2px solid ${C.accent}40` }}>
-                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.accent, fontSize: 11 }}>Net Cash from Operations</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.opCF>=0?C.accent:C.danger, fontSize: 11 }}>{fmtC(r.opCF)}</td>)}
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.accent, fontSize: 13 }}>Net Cash from Operations</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.opCF>=0?C.accent:C.danger, fontSize: 13 }}>{fmtC(r.opCF)}</td>)}
               </tr>
 
               {/* Investing Activities header */}
-              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 11, fontWeight: 700, color: C.purple, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Flows from Investing Activities</td></tr>
+              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 13, fontWeight: 700, color: C.purple, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Flows from Investing Activities</td></tr>
               {/* Capital Expenditure */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Capital Expenditure (Fixed Assets)</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.capEx>0?C.danger:C.dim, fontSize: 11 }}>{r.capEx>0?`(${fmtC(r.capEx)})`:"—"}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Capital Expenditure (Fixed Assets)</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.capEx>0?C.danger:C.dim, fontSize: 13 }}>{r.capEx>0?`(${fmtC(r.capEx)})`:"—"}</td>)}
               </tr>
               {/* Investing Cash Flow */}
               <tr style={{ borderBottom: `2px solid ${C.purple}40` }}>
-                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.purple, fontSize: 11 }}>Net Cash from Investing</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.investingCF>=0?C.purple:C.danger, fontSize: 11 }}>{fmtC(r.investingCF)}</td>)}
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.purple, fontSize: 13 }}>Net Cash from Investing</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.investingCF>=0?C.purple:C.danger, fontSize: 13 }}>{fmtC(r.investingCF)}</td>)}
               </tr>
 
               {/* Financing Activities header */}
-              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 11, fontWeight: 700, color: C.success, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Flows from Financing Activities</td></tr>
+              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 13, fontWeight: 700, color: C.success, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Flows from Financing Activities</td></tr>
               {/* Equity Funding */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Equity Raised</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.equityFunding>0?C.success:C.dim, fontSize: 11 }}>{r.equityFunding>0?fmtC(r.equityFunding):"—"}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Equity Raised</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.equityFunding>0?C.success:C.dim, fontSize: 13 }}>{r.equityFunding>0?fmtC(r.equityFunding):"—"}</td>)}
               </tr>
               {/* Debt Funding */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Debt Proceeds</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.debtFunding>0?C.warning:C.dim, fontSize: 11 }}>{r.debtFunding>0?fmtC(r.debtFunding):"—"}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Debt Proceeds</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.debtFunding>0?C.warning:C.dim, fontSize: 13 }}>{r.debtFunding>0?fmtC(r.debtFunding):"—"}</td>)}
               </tr>
               {/* Principal Repayment */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Less: Debt Repayment</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.principalRepayment>0?C.danger:C.dim, fontSize: 11 }}>{r.principalRepayment>0?`(${fmtC(r.principalRepayment)})`:"—"}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Less: Debt Repayment</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: r.principalRepayment>0?C.danger:C.dim, fontSize: 13 }}>{r.principalRepayment>0?`(${fmtC(r.principalRepayment)})`:"—"}</td>)}
               </tr>
               {/* Financing Cash Flow */}
               <tr style={{ borderBottom: `2px solid ${C.success}40` }}>
-                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.success, fontSize: 11 }}>Net Cash from Financing</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.financingCF>=0?C.success:C.danger, fontSize: 11 }}>{fmtC(r.financingCF)}</td>)}
+                <td style={{ padding: "8px 10px", fontWeight: 700, color: C.success, fontSize: 13 }}>Net Cash from Financing</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.financingCF>=0?C.success:C.danger, fontSize: 13 }}>{fmtC(r.financingCF)}</td>)}
               </tr>
 
               {/* Summary */}
-              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 11, fontWeight: 700, color: C.text, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Summary</td></tr>
+              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 13, fontWeight: 700, color: C.text, textTransform: "uppercase", letterSpacing: "0.04em" }}>Cash Summary</td></tr>
               {/* Net Change in Cash */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Net Change in Cash</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: (r.opCF+r.investingCF+r.financingCF)>=0?C.success:C.danger, fontSize: 11 }}>{fmtC(r.opCF + r.investingCF + r.financingCF)}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Net Change in Cash</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: (r.opCF+r.investingCF+r.financingCF)>=0?C.success:C.danger, fontSize: 13 }}>{fmtC(r.opCF + r.investingCF + r.financingCF)}</td>)}
               </tr>
               {/* Beginning Cash */}
               <tr style={{ borderBottom: `1px solid ${C.border}10` }}>
-                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>Beginning Cash</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.muted, fontSize: 11 }}>{fmtC(r.beginCash)}</td>)}
+                <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>Beginning Cash</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: C.muted, fontSize: 13 }}>{fmtC(r.beginCash)}</td>)}
               </tr>
               {/* Ending Cash */}
               <tr style={{ borderBottom: `2px solid ${C.accent}40`, background: C.cardAlt }}>
-                <td style={{ padding: "10px 10px", fontWeight: 700, color: C.text, fontSize: 12 }}>Ending Cash</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "10px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.endCash>=0?C.accent:C.danger, fontSize: 12 }}>{fmtC(r.endCash)}</td>)}
+                <td style={{ padding: "10px 10px", fontWeight: 700, color: C.text, fontSize: 14 }}>Ending Cash</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "10px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: r.endCash>=0?C.accent:C.danger, fontSize: 14 }}>{fmtC(r.endCash)}</td>)}
               </tr>
             </tbody>
           </table>
@@ -1120,45 +1120,45 @@ function ProjectionsTab({ model }) {
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={annualData} stackOffset="sign">
                 <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-                <XAxis dataKey="year" tick={{ fontSize: 10, fill: C.dim }} />
-                <YAxis tick={{ fontSize: 10, fill: C.dim }} tickFormatter={fmt} />
+                <XAxis dataKey="year" tick={{ fontSize: 12, fill: C.dim }} />
+                <YAxis tick={{ fontSize: 12, fill: C.dim }} tickFormatter={fmt} />
                 <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} />
-                <Legend wrapperStyle={{ fontSize: 10 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Bar dataKey="endCash" name="Cash" stackId="a" fill={C.accent} radius={[0,0,0,0]} />
                 <Bar dataKey="receivables" name="Receivables" stackId="a" fill={C.cyan} />
                 <Bar dataKey="inventory" name="Inventory" stackId="a" fill={C.warning} />
                 <Bar dataKey="fixedAssets" name="Fixed Assets (NBV)" stackId="a" fill={C.purple} radius={[3,3,0,0]} />
               </BarChart>
             </ResponsiveContainer>
-            <div style={{ textAlign: "center", fontSize: 10, color: C.dim, marginTop: 4 }}>Asset Composition</div>
+            <div style={{ textAlign: "center", fontSize: 12, color: C.dim, marginTop: 4 }}>Asset Composition</div>
           </div>
           <div>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={annualData}>
                 <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-                <XAxis dataKey="year" tick={{ fontSize: 10, fill: C.dim }} />
-                <YAxis tick={{ fontSize: 10, fill: C.dim }} tickFormatter={fmt} />
+                <XAxis dataKey="year" tick={{ fontSize: 12, fill: C.dim }} />
+                <YAxis tick={{ fontSize: 12, fill: C.dim }} tickFormatter={fmt} />
                 <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} />
-                <Legend wrapperStyle={{ fontSize: 10 }} />
+                <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Bar dataKey="payables" name="Payables" stackId="b" fill={C.danger+"90"} />
                 <Bar dataKey="debt" name="Debt" stackId="b" fill={C.warning+"90"} />
                 <Bar dataKey="equity" name="Equity Invested" stackId="b" fill={C.success+"70"} />
                 <Bar dataKey="retainedEarnings" name="Retained Earnings" stackId="b" fill={C.success} radius={[3,3,0,0]} />
               </BarChart>
             </ResponsiveContainer>
-            <div style={{ textAlign: "center", fontSize: 10, color: C.dim, marginTop: 4 }}>Liabilities + Equity</div>
+            <div style={{ textAlign: "center", fontSize: 12, color: C.dim, marginTop: 4 }}>Liabilities + Equity</div>
           </div>
         </div>
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11 }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
             <thead><tr style={{ borderBottom: `2px solid ${C.border}` }}>
               {["","Year 1","Year 2","Year 3","Year 4","Year 5"].map(h=>(
-                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 10px", color: C.muted, fontSize: 10, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
+                <th key={h} style={{ textAlign: h?"right":"left", padding: "8px 10px", color: C.muted, fontSize: 12, textTransform: "uppercase", fontWeight: 500 }}>{h}</th>
               ))}
             </tr></thead>
             <tbody>
               {/* Assets */}
-              <tr><td colSpan={6} style={{ padding: "10px 10px 4px", fontSize: 11, fontWeight: 700, color: C.accent, textTransform: "uppercase", letterSpacing: "0.04em" }}>Assets</td></tr>
+              <tr><td colSpan={6} style={{ padding: "10px 10px 4px", fontSize: 13, fontWeight: 700, color: C.accent, textTransform: "uppercase", letterSpacing: "0.04em" }}>Assets</td></tr>
               {[
                 { label: "Cash", key: "endCash", color: C.accent },
                 { label: "Receivables", key: "receivables", color: C.cyan },
@@ -1166,51 +1166,51 @@ function ProjectionsTab({ model }) {
                 { label: "Fixed Assets (NBV)", key: "fixedAssets", color: C.purple },
               ].map(row => (
                 <tr key={row.key} style={{ borderBottom: `1px solid ${C.border}10` }}>
-                  <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>{row.label}</td>
-                  {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: row.color, fontSize: 11 }}>{fmtC(r[row.key])}</td>)}
+                  <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>{row.label}</td>
+                  {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: row.color, fontSize: 13 }}>{fmtC(r[row.key])}</td>)}
                 </tr>
               ))}
               <tr style={{ borderBottom: `2px solid ${C.accent}40` }}>
-                <td style={{ padding: "6px 10px", fontWeight: 700, color: C.text, fontSize: 11 }}>Total Assets</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: C.text, fontSize: 11 }}>{fmtC(r.totalAssets)}</td>)}
+                <td style={{ padding: "6px 10px", fontWeight: 700, color: C.text, fontSize: 13 }}>Total Assets</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: C.text, fontSize: 13 }}>{fmtC(r.totalAssets)}</td>)}
               </tr>
 
               {/* Liabilities */}
-              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 11, fontWeight: 700, color: C.danger, textTransform: "uppercase", letterSpacing: "0.04em" }}>Liabilities</td></tr>
+              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 13, fontWeight: 700, color: C.danger, textTransform: "uppercase", letterSpacing: "0.04em" }}>Liabilities</td></tr>
               {[
                 { label: "Payables", key: "payables", color: C.danger },
                 { label: "Debt Outstanding", key: "debt", color: C.warning },
               ].map(row => (
                 <tr key={row.key} style={{ borderBottom: `1px solid ${C.border}10` }}>
-                  <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>{row.label}</td>
-                  {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: row.color, fontSize: 11 }}>{fmtC(r[row.key])}</td>)}
+                  <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>{row.label}</td>
+                  {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: row.color, fontSize: 13 }}>{fmtC(r[row.key])}</td>)}
                 </tr>
               ))}
               <tr style={{ borderBottom: `1px solid ${C.border}40` }}>
-                <td style={{ padding: "6px 10px", fontWeight: 600, color: C.text, fontSize: 11 }}>Total Liabilities</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 600, color: C.text, fontSize: 11 }}>{fmtC(r.totalLiabilities)}</td>)}
+                <td style={{ padding: "6px 10px", fontWeight: 600, color: C.text, fontSize: 13 }}>Total Liabilities</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 600, color: C.text, fontSize: 13 }}>{fmtC(r.totalLiabilities)}</td>)}
               </tr>
 
               {/* Equity */}
-              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 11, fontWeight: 700, color: C.success, textTransform: "uppercase", letterSpacing: "0.04em" }}>Equity</td></tr>
+              <tr><td colSpan={6} style={{ padding: "12px 10px 4px", fontSize: 13, fontWeight: 700, color: C.success, textTransform: "uppercase", letterSpacing: "0.04em" }}>Equity</td></tr>
               {[
                 { label: "Equity Invested", key: "equity", color: C.success },
                 { label: "Retained Earnings", key: "retainedEarnings", color: null },
               ].map(row => (
                 <tr key={row.key} style={{ borderBottom: `1px solid ${C.border}10` }}>
-                  <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 11 }}>{row.label}</td>
-                  {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: row.color || (r[row.key]>=0?C.success:C.danger), fontSize: 11 }}>{fmtC(r[row.key])}</td>)}
+                  <td style={{ padding: "5px 10px 5px 20px", color: C.muted, fontSize: 13 }}>{row.label}</td>
+                  {annualData.map((r,i) => <td key={i} style={{ padding: "5px 10px", textAlign: "right", fontFamily: mono, color: row.color || (r[row.key]>=0?C.success:C.danger), fontSize: 13 }}>{fmtC(r[row.key])}</td>)}
                 </tr>
               ))}
               <tr style={{ borderBottom: `2px solid ${C.success}40` }}>
-                <td style={{ padding: "6px 10px", fontWeight: 700, color: C.text, fontSize: 11 }}>Total Equity</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: C.text, fontSize: 11 }}>{fmtC(r.totalEquity)}</td>)}
+                <td style={{ padding: "6px 10px", fontWeight: 700, color: C.text, fontSize: 13 }}>Total Equity</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "6px 10px", textAlign: "right", fontFamily: mono, fontWeight: 700, color: C.text, fontSize: 13 }}>{fmtC(r.totalEquity)}</td>)}
               </tr>
 
               {/* Check line */}
               <tr style={{ background: C.bg }}>
-                <td style={{ padding: "8px 10px", fontWeight: 600, color: C.dim, fontSize: 10 }}>Liabilities + Equity</td>
-                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 600, color: Math.abs(r.totalAssets - (r.totalLiabilities + r.totalEquity)) < 1 ? C.success : C.danger, fontSize: 11 }}>{fmtC(r.totalLiabilities + r.totalEquity)}</td>)}
+                <td style={{ padding: "8px 10px", fontWeight: 600, color: C.dim, fontSize: 12 }}>Liabilities + Equity</td>
+                {annualData.map((r,i) => <td key={i} style={{ padding: "8px 10px", textAlign: "right", fontFamily: mono, fontWeight: 600, color: Math.abs(r.totalAssets - (r.totalLiabilities + r.totalEquity)) < 1 ? C.success : C.danger, fontSize: 13 }}>{fmtC(r.totalLiabilities + r.totalEquity)}</td>)}
               </tr>
             </tbody>
           </table>
@@ -1269,7 +1269,7 @@ function ScenarioTab({ model }) {
         <Hdr sub="Adjust parameters relative to your base case">Scenario Parameters</Hdr>
         <div className="scenario-grid">
           <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: C.step[0], marginBottom: 10 }}>📈 Revenue Levers</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: C.step[0], marginBottom: 10 }}>📈 Revenue Levers</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <Slider label="Price Adjustment" value={ov.priceAdj} onChange={v=>setOv(o=>({...o,priceAdj:v}))} min={-50} max={50} suffix="%" color={C.step[0]} />
               <Slider label="Frequency Adj." value={ov.freqAdj} onChange={v=>setOv(o=>({...o,freqAdj:v}))} min={-6} max={12} step={1} suffix="/yr" color={C.ch[2]} />
@@ -1278,7 +1278,7 @@ function ScenarioTab({ model }) {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: C.step[2], marginBottom: 10 }}>💸 Cost & Funding</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: C.step[2], marginBottom: 10 }}>💸 Cost & Funding</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <Slider label="Operating Cost ×" value={ov.opCostMult} onChange={v=>setOv(o=>({...o,opCostMult:v}))} min={50} max={200} suffix="%" color={C.step[2]} />
               <Slider label="Variable Cost Adj." value={ov.varCostAdj} onChange={v=>setOv(o=>({...o,varCostAdj:v}))} min={-20} max={20} step={1} suffix="pp" color={C.danger} />
@@ -1287,7 +1287,7 @@ function ScenarioTab({ model }) {
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 600, color: C.step[3], marginBottom: 10 }}>🔄 Working Capital</div>
+            <div style={{ fontSize: 14, fontWeight: 600, color: C.step[3], marginBottom: 10 }}>🔄 Working Capital</div>
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <Slider label="Days Receivable" value={ov.daysRecAdj} onChange={v=>setOv(o=>({...o,daysRecAdj:v}))} min={-30} max={60} step={5} suffix="d" color={C.warning} />
               <Slider label="Days Payable (all)" value={ov.daysPayAdj} onChange={v=>setOv(o=>({...o,daysPayAdj:v}))} min={-15} max={30} step={5} suffix="d" color={C.purple} />
@@ -1311,8 +1311,8 @@ function ScenarioTab({ model }) {
           <ResponsiveContainer width="100%" height={250}>
             <ComposedChart data={comp}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 9, fill: C.dim }} tickFormatter={v=>`M${v}`} />
-              <YAxis tick={{ fontSize: 9, fill: C.dim }} tickFormatter={fmt} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: C.dim }} tickFormatter={v=>`M${v}`} />
+              <YAxis tick={{ fontSize: 11, fill: C.dim }} tickFormatter={fmt} />
               <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} labelFormatter={l=>`Month ${l}`} />
               <Line type="monotone" dataKey="baseRev" name="Base" stroke={C.dim} strokeWidth={2} strokeDasharray="5 5" dot={false} />
               <Line type="monotone" dataKey="scRev" name="Scenario" stroke={C.success} strokeWidth={2.5} dot={false} />
@@ -1324,8 +1324,8 @@ function ScenarioTab({ model }) {
           <ResponsiveContainer width="100%" height={250}>
             <ComposedChart data={comp}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 9, fill: C.dim }} tickFormatter={v=>`M${v}`} />
-              <YAxis tick={{ fontSize: 9, fill: C.dim }} tickFormatter={fmt} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: C.dim }} tickFormatter={v=>`M${v}`} />
+              <YAxis tick={{ fontSize: 11, fill: C.dim }} tickFormatter={fmt} />
               <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} labelFormatter={l=>`Month ${l}`} />
               <ReferenceLine y={0} stroke={C.dim} strokeDasharray="3 3" />
               <Line type="monotone" dataKey="baseEBIT" name="Base" stroke={C.dim} strokeWidth={2} strokeDasharray="5 5" dot={false} />
@@ -1338,8 +1338,8 @@ function ScenarioTab({ model }) {
           <ResponsiveContainer width="100%" height={250}>
             <ComposedChart data={comp}>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="month" tick={{ fontSize: 9, fill: C.dim }} tickFormatter={v=>`M${v}`} />
-              <YAxis tick={{ fontSize: 9, fill: C.dim }} tickFormatter={fmt} />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: C.dim }} tickFormatter={v=>`M${v}`} />
+              <YAxis tick={{ fontSize: 11, fill: C.dim }} tickFormatter={fmt} />
               <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} labelFormatter={l=>`Month ${l}`} />
               <ReferenceLine y={0} stroke={C.dim} strokeDasharray="3 3" />
               <Area type="monotone" dataKey="baseCash" name="Base" fill={C.dim+"08"} stroke={C.dim} strokeWidth={2} strokeDasharray="5 5" />
@@ -1435,8 +1435,8 @@ function MonteCarloTab({ model }) {
               <ResponsiveContainer width="100%" height={200}>
                 <BarChart data={ch.data}>
                   <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-                  <XAxis dataKey="label" tick={{ fontSize: 8, fill: C.dim }} interval={3} />
-                  <YAxis tick={{ fontSize: 9, fill: C.dim }} tickFormatter={v=>`${v.toFixed(0)}%`} />
+                  <XAxis dataKey="label" tick={{ fontSize: 10, fill: C.dim }} interval={3} />
+                  <YAxis tick={{ fontSize: 11, fill: C.dim }} tickFormatter={v=>`${v.toFixed(0)}%`} />
                   <Tooltip contentStyle={ttStyle} formatter={v=>`${v.toFixed(1)}%`} />
                   <Bar dataKey="freq" radius={[3,3,0,0]}>
                     {ch.data.map((e,idx)=>(
@@ -1455,8 +1455,8 @@ function MonteCarloTab({ model }) {
           <ResponsiveContainer width="100%" height={320}>
             <ScatterChart>
               <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
-              <XAxis dataKey="irr" tick={{ fontSize: 10, fill: C.dim }} tickFormatter={v=>`${(v*100).toFixed(0)}%`} />
-              <YAxis dataKey="npv" tick={{ fontSize: 10, fill: C.dim }} tickFormatter={fmt} />
+              <XAxis dataKey="irr" tick={{ fontSize: 12, fill: C.dim }} tickFormatter={v=>`${(v*100).toFixed(0)}%`} />
+              <YAxis dataKey="npv" tick={{ fontSize: 12, fill: C.dim }} tickFormatter={fmt} />
               <Tooltip contentStyle={ttStyle} formatter={(v,name)=>name==="IRR"?`${(v*100).toFixed(1)}%`:fmtC(v)} />
               <ReferenceLine y={0} stroke={C.dim} strokeDasharray="3 3" />
               <ReferenceLine x={0} stroke={C.dim} strokeDasharray="3 3" />
@@ -1465,18 +1465,64 @@ function MonteCarloTab({ model }) {
             </ScatterChart>
           </ResponsiveContainer>
           <div style={{ display: "flex", gap: 18, justifyContent: "center", marginTop: 6 }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.muted }}><span style={{ width: 9, height: 9, borderRadius: "50%", background: C.success, display: "inline-block" }}/> Survived</span>
-            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.muted }}><span style={{ width: 9, height: 9, borderRadius: "50%", background: C.danger, display: "inline-block" }}/> Defaulted</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: C.muted }}><span style={{ width: 9, height: 9, borderRadius: "50%", background: C.success, display: "inline-block" }}/> Survived</span>
+            <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, color: C.muted }}><span style={{ width: 9, height: 9, borderRadius: "50%", background: C.danger, display: "inline-block" }}/> Defaulted</span>
           </div>
         </Card>
       </>)}
 
       {!results && (
         <Card style={{ textAlign: "center", padding: 50 }}>
-          <div style={{ fontSize: 44, marginBottom: 14 }}>🎲</div>
-          <div style={{ fontSize: 17, color: C.text, marginBottom: 6 }}>Ready to simulate</div>
-          <div style={{ fontSize: 12, color: C.muted, maxWidth: 400, margin: "0 auto" }}>Configure volatility and run {numRuns} stochastic scenarios.</div>
+          <div style={{ fontSize: 48, marginBottom: 14 }}>🎲</div>
+          <div style={{ fontSize: 19, color: C.text, marginBottom: 6 }}>Ready to simulate</div>
+          <div style={{ fontSize: 14, color: C.muted, maxWidth: 400, margin: "0 auto" }}>Configure volatility and run {numRuns} stochastic scenarios.</div>
         </Card>
+      )}
+    </div>
+  );
+}
+
+// ─── ABOUT SECTION ──────────────────────────────────────────────────────────
+function AboutPanel({ expanded, onToggle, inline }) {
+  return (
+    <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden", boxShadow: "0 1px 3px rgba(0,0,0,0.04)", ...(inline ? { margin: "0 0 24px" } : {}) }}>
+      <button onClick={onToggle} style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 18px", background: "transparent", border: "none", cursor: "pointer", color: C.text }}>
+        <span style={{ fontSize: 14, fontWeight: 600 }}>About this tool</span>
+        <span style={{ fontSize: 16, color: C.dim, transition: "transform 0.2s", transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}>▼</span>
+      </button>
+      {expanded && (
+        <div style={{ padding: "0 18px 18px", fontSize: 13, lineHeight: 1.7, color: C.muted }}>
+          <p style={{ margin: "0 0 12px" }}>An <strong style={{ color: C.text }}>interactive 5-year financial planning tool</strong> for entrepreneurship education, developed by Professor Dimo Dimov. Students build financial models by following a structured four-step process — from revenue decomposition through to funding requirements — and then explore scenarios and run Monte Carlo simulations to stress-test their assumptions.</p>
+          <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 8 }}>Pedagogical Framework</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 10, marginBottom: 14 }}>
+            {[
+              { n: "1", c: C.step[0], title: "Revenue Model", desc: "Decompose revenue into customers, units, price, and frequency" },
+              { n: "2", c: C.step[1], title: "Operating Assets", desc: "Identify fixed assets and operating costs with payment terms" },
+              { n: "3", c: C.step[2], title: "Variable Costs", desc: "Define costs that scale with revenue (COGS, shipping, etc.)" },
+              { n: "4", c: C.step[3], title: "Funding & Working Capital", desc: "Model the cash conversion cycle and determine funding needs" },
+            ].map(s => (
+              <div key={s.n} style={{ display: "flex", gap: 10, padding: "10px 12px", background: s.c + "08", border: `1px solid ${s.c}20`, borderRadius: 8 }}>
+                <div style={{ width: 22, height: 22, borderRadius: "50%", background: s.c, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff", flexShrink: 0, marginTop: 1 }}>{s.n}</div>
+                <div><div style={{ fontSize: 13, fontWeight: 600, color: C.text, marginBottom: 2 }}>{s.title}</div><div style={{ fontSize: 12, color: C.dim }}>{s.desc}</div></div>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 8 }}>Key Features</div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 6, marginBottom: 10 }}>
+            {[
+              { icon: "🔧", label: "Model Builder", desc: "8 templates, step-by-step guidance" },
+              { icon: "📈", label: "5-Year Projections", desc: "P&L, cash flow, balance sheet" },
+              { icon: "🔀", label: "Scenario Explorer", desc: "Revenue, cost & WC levers" },
+              { icon: "🎲", label: "Monte Carlo", desc: "Stochastic simulation & risk analysis" },
+            ].map(f => (
+              <div key={f.label} style={{ display: "flex", alignItems: "center", gap: 8, padding: "6px 10px", background: C.bg, borderRadius: 6, fontSize: 12 }}>
+                <span style={{ fontSize: 15 }}>{f.icon}</span>
+                <div><strong style={{ color: C.text }}>{f.label}</strong> <span style={{ color: C.dim }}>— {f.desc}</span></div>
+              </div>
+            ))}
+          </div>
+          <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 10, paddingTop: 10, fontSize: 12, color: C.dim, textAlign: "center" }}>&copy; Professor Dimo Dimov 2026</div>
+        </div>
       )}
     </div>
   );
@@ -1487,6 +1533,8 @@ export default function FinancialModelSimulator() {
   const [tab, setTab] = useState("builder");
   const [model, setModel] = useState(null);
   const [tmplKey, setTmplKey] = useState(null);
+  const [aboutExpanded, setAboutExpanded] = useState(false);
+  const [aboutModalOpen, setAboutModalOpen] = useState(false);
 
   const selectTemplate = (key) => {
     const t = TEMPLATES[key];
@@ -1507,15 +1555,18 @@ export default function FinancialModelSimulator() {
         <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
         <div style={{ maxWidth: 880, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 44 }}>
-            <div style={{ display: "inline-flex", background: C.accentDim+"60", border: `1px solid ${C.accent}30`, borderRadius: 8, padding: "5px 12px", fontSize: 10, color: C.accent, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>Financial Model Simulator</div>
-            <h1 style={{ fontSize: 34, fontWeight: 700, margin: "0 0 10px", background: `linear-gradient(135deg,${C.text},${C.accent})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Build Your 5-Year Financial Plan</h1>
-            <p style={{ fontSize: 14, color: C.muted, maxWidth: 560, margin: "0 auto 8px" }}>Define revenue, identify operating assets, derive costs, determine funding requirements.</p>
-            <div style={{ display: "flex", justifyContent: "center", gap: 20, margin: "24px 0" }}>
+            <div style={{ display: "inline-flex", background: C.accentDim+"60", border: `1px solid ${C.accent}30`, borderRadius: 8, padding: "5px 12px", fontSize: 12, color: C.accent, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>Financial Model Simulator</div>
+            <h1 style={{ fontSize: 38, fontWeight: 700, margin: "0 0 10px", background: `linear-gradient(135deg,${C.text},${C.accent})`, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Build Your 5-Year Financial Plan</h1>
+            <p style={{ fontSize: 16, color: C.muted, maxWidth: 560, margin: "0 auto 8px" }}>Define revenue, identify operating assets, derive costs, determine funding requirements.</p>
+          </div>
+          <AboutPanel expanded={aboutExpanded} onToggle={() => setAboutExpanded(e => !e)} inline />
+          <div style={{ textAlign: "center", marginBottom: 24 }}>
+            <div style={{ display: "flex", justifyContent: "center", gap: 20, margin: "0 0 24px" }}>
               {[{n:1,l:"Revenue",c:C.step[0]},{n:2,l:"Assets",c:C.step[1]},{n:3,l:"Costs",c:C.step[2]},{n:4,l:"Funding",c:C.step[3]}].map(s=>(
                 <div key={s.n} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: "50%", background: s.c, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, color: "#fff" }}>{s.n}</div>
-                  <span style={{ fontSize: 12, color: C.muted }}>{s.l}</span>
-                  {s.n < 4 && <span style={{ color: C.dim, fontSize: 14, marginLeft: 8 }}>→</span>}
+                  <div style={{ width: 24, height: 24, borderRadius: "50%", background: s.c, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color: "#fff" }}>{s.n}</div>
+                  <span style={{ fontSize: 14, color: C.muted }}>{s.l}</span>
+                  {s.n < 4 && <span style={{ color: C.dim, fontSize: 16, marginLeft: 8 }}>→</span>}
                 </div>
               ))}
             </div>
@@ -1529,13 +1580,23 @@ export default function FinancialModelSimulator() {
   return (
     <div style={{ background: C.bg, minHeight: "100vh", color: C.text, fontFamily: fonts }}>
       <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      <div className="app-header" style={{ borderBottom: `1px solid ${C.border}`, background: C.card, position: "sticky", top: 0, zIndex: 100 }}>
+      <div className="app-header" style={{ borderBottom: `1px solid ${C.border}`, background: C.card, position: "sticky", top: 0, zIndex: 100, boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
         <div className="app-header-title">
-          <span style={{ fontSize: 11, color: C.accent, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Financial Model Simulator</span>
-          {tmplKey && <span className="hide-mobile" style={{ fontSize: 11, color: C.dim, padding: "2px 8px", background: C.bg, borderRadius: 4 }}>{TEMPLATES[tmplKey]?.icon} {TEMPLATES[tmplKey]?.name}</span>}
+          <span style={{ fontSize: 13, color: C.accent, textTransform: "uppercase", letterSpacing: "0.08em", fontWeight: 600 }}>Financial Model Simulator</span>
+          {tmplKey && <span className="hide-mobile" style={{ fontSize: 13, color: C.dim, padding: "2px 8px", background: C.bg, borderRadius: 4 }}>{TEMPLATES[tmplKey]?.icon} {TEMPLATES[tmplKey]?.name}</span>}
         </div>
-        <button onClick={() => { setModel(null); setTmplKey(null); setTab("builder"); }} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 11, cursor: "pointer" }}>↩ New Model</button>
+        <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <button onClick={() => setAboutModalOpen(o => !o)} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 13, cursor: "pointer" }}>About</button>
+          <button onClick={() => { setModel(null); setTmplKey(null); setTab("builder"); }} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 13, cursor: "pointer" }}>↩ New Model</button>
+        </div>
       </div>
+      {aboutModalOpen && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }} onClick={() => setAboutModalOpen(false)}>
+          <div style={{ maxWidth: 700, width: "100%", maxHeight: "80vh", overflowY: "auto", borderRadius: 16, boxShadow: "0 8px 30px rgba(0,0,0,0.12)" }} onClick={e => e.stopPropagation()}>
+            <AboutPanel expanded onToggle={() => setAboutModalOpen(false)} />
+          </div>
+        </div>
+      )}
       <div className="tab-nav" style={{ borderBottom: `1px solid ${C.border}` }}>
         <TabBtn active={tab==="builder"} onClick={()=>setTab("builder")} icon="🔧" color={C.accent}>Model Builder</TabBtn>
         <TabBtn active={tab==="projections"} onClick={()=>setTab("projections")} icon="📈" color={C.success}>5-Year Projections</TabBtn>
