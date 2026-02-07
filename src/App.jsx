@@ -225,15 +225,17 @@ function runProjection(model, months = 60, stochastic = false, vol = {}) {
     const streamDetails = model.revenueStreams.map((stream, idx) => {
       let growthRate = stream.customerGrowthRate / 100;
       let churnRate = (stream.churnRate || 0) / 100;
+      let pricePerUnit = stream.pricePerUnit;
       if (stochastic) {
-        const gV = (vol.growthVol || 30) / 100, cV = (vol.churnVol || 20) / 100;
+        const gV = (vol.growthVol || 30) / 100, cV = (vol.churnVol || 20) / 100, pV = (vol.priceVol || 20) / 100;
         growthRate *= (1 + (Math.random() - 0.5) * 2 * gV);
         churnRate = Math.max(0, churnRate * (1 + (Math.random() - 0.5) * 2 * cV));
+        pricePerUnit *= (1 + (Math.random() - 0.5) * 2 * pV);
       }
       const newCust = customerCounts[idx] * growthRate;
       const churned = customerCounts[idx] * churnRate;
       customerCounts[idx] = Math.max(0, customerCounts[idx] + newCust - churned);
-      const monthlyRev = customerCounts[idx] * stream.unitsPerTransaction * stream.pricePerUnit * (stream.frequencyPerYear / 12);
+      const monthlyRev = customerCounts[idx] * stream.unitsPerTransaction * pricePerUnit * (stream.frequencyPerYear / 12);
       totalRevenue += monthlyRev;
       return { customers: customerCounts[idx], revenue: monthlyRev };
     });
@@ -443,7 +445,7 @@ function Slider({ label, value, onChange, min = 0, max = 100, step = 1, suffix =
   );
 }
 
-function Card({ children, style }) { return <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 22, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", ...style }}>{children}</div>; }
+function Card({ children, style, className }) { return <div className={className} style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: 22, boxShadow: "0 1px 3px rgba(0,0,0,0.04)", ...style }}>{children}</div>; }
 function Hdr({ children, sub, color }) {
   return (<div style={{ marginBottom: 14 }}><h3 style={{ fontSize: 17, fontWeight: 600, color: color || C.text, margin: 0 }}>{children}</h3>{sub && <p style={{ fontSize: 13, color: C.dim, margin: "3px 0 0 0" }}>{sub}</p>}</div>);
 }
@@ -757,8 +759,83 @@ function Step4Funding({ model, setModel, fundingGap }) {
           )}
         </div>
       ))}
+
+      {/* Export Model Inputs Button */}
+      <div style={{ marginTop: 20, paddingTop: 16, borderTop: `1px solid ${C.border}` }}>
+        <Btn onClick={() => exportModelInputs(model)} small>Export Model Inputs (CSV)</Btn>
+      </div>
     </Card>
   );
+}
+
+// Export model inputs to CSV
+function exportModelInputs(model) {
+  const rows = [];
+  rows.push(["Financial Model - Detailed Inputs"]);
+  rows.push(["Exported", new Date().toLocaleString()]);
+  rows.push([]);
+
+  // Revenue Streams
+  rows.push(["REVENUE STREAMS"]);
+  rows.push(["Name", "Price/Unit (£)", "Units/Transaction", "Frequency/Year", "Initial Customers", "Monthly Growth (%)", "Monthly Churn (%)"]);
+  model.revenueStreams.forEach(s => {
+    rows.push([s.name, s.pricePerUnit, s.unitsPerTransaction, s.frequencyPerYear, s.initialCustomers, s.customerGrowthRate, s.churnRate]);
+  });
+  rows.push([]);
+
+  // Operating Assets
+  rows.push(["OPERATING ASSETS"]);
+  rows.push(["Name", "Type", "Monthly Cost (£)", "Initial Cost (£)", "Useful Life (Years)", "Monthly Growth (%)", "Days Payable", "Scale with Revenue"]);
+  model.operatingAssets.forEach(a => {
+    if (a.type === "operating") {
+      rows.push([a.name, "Operating", a.monthlyCost, "", "", a.growthRate || 0, a.daysPayable || 0, a.scaleWithRevenue ? "Yes" : "No"]);
+    } else {
+      rows.push([a.name, "Fixed Asset", "", a.cost, a.usefulLifeYears, "", "", ""]);
+    }
+  });
+  rows.push([]);
+
+  // Variable Costs
+  rows.push(["VARIABLE COSTS"]);
+  rows.push(["Name", "% of Revenue"]);
+  model.variableCosts.forEach(c => {
+    rows.push([c.name, c.percentOfRevenue]);
+  });
+  rows.push([]);
+
+  // Working Capital
+  rows.push(["WORKING CAPITAL"]);
+  rows.push(["Days Receivable", model.workingCapital.daysReceivable]);
+  rows.push(["Days Inventory", model.workingCapital.daysInventory || 0]);
+  rows.push([]);
+
+  // Capital Structure
+  rows.push(["CAPITAL STRUCTURE"]);
+  rows.push(["Initial Cash (£)", model.initialCash]);
+  rows.push([]);
+
+  // Funding Rounds
+  if (model.fundingRounds.length > 0) {
+    rows.push(["FUNDING ROUNDS"]);
+    rows.push(["Name", "Type", "Month", "Amount (£)", "Term (Months)", "Interest Rate (%)"]);
+    model.fundingRounds.forEach(r => {
+      rows.push([r.name, r.type, r.month, r.amount, r.type === "debt" ? (r.termMonths || 36) : "", r.type === "debt" ? (r.interestRate || 8) : ""]);
+    });
+  }
+
+  // Convert to CSV string
+  const csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
+
+  // Trigger download
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "model-inputs.csv";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
 
 // ─── MODEL BUILDER TAB ──────────────────────────────────────────────────────
@@ -854,6 +931,93 @@ function ProjectionsTab({ model }) {
   const wtdPay = totalOpCost > 0 ? opItems.reduce((s, a) => s + a.monthlyCost * (a.daysPayable||0), 0) / totalOpCost : 0;
   const ccc = model.workingCapital.daysReceivable + (model.workingCapital.daysInventory||0) - wtdPay;
 
+  // CSV Export function
+  const exportCSV = () => {
+    const rows = [];
+    // Header
+    rows.push(["Financial Model - 5-Year Projections"]);
+    rows.push([]);
+
+    // Annual Summary
+    rows.push(["ANNUAL SUMMARY"]);
+    rows.push(["", "Year 1", "Year 2", "Year 3", "Year 4", "Year 5"]);
+    rows.push(["Revenue", ...annualData.map(r => r.revenue.toFixed(0))]);
+    rows.push(["EBIT", ...annualData.map(r => r.ebit.toFixed(0))]);
+    rows.push(["Interest", ...annualData.map(r => r.interest.toFixed(0))]);
+    rows.push(["Net Income", ...annualData.map(r => r.netIncome.toFixed(0))]);
+    rows.push(["Operating Cash Flow", ...annualData.map(r => r.opCF.toFixed(0))]);
+    rows.push(["Cash (End of Year)", ...annualData.map(r => r.endCash.toFixed(0))]);
+    rows.push(["Net Working Capital", ...annualData.map(r => r.nwc.toFixed(0))]);
+    rows.push(["Debt Outstanding", ...annualData.map(r => r.debt.toFixed(0))]);
+    rows.push(["Customers", ...annualData.map(r => r.customers.toFixed(0))]);
+    rows.push([]);
+
+    // P&L Statement
+    rows.push(["PROFIT & LOSS STATEMENT"]);
+    rows.push(["", "Year 1", "Year 2", "Year 3", "Year 4", "Year 5"]);
+    rows.push(["Revenue", ...annualData.map(r => r.revenue.toFixed(0))]);
+    rows.push(["Cost of Goods Sold", ...annualData.map(r => (-r.variableCosts).toFixed(0))]);
+    rows.push(["Gross Profit", ...annualData.map(r => r.grossProfit.toFixed(0))]);
+    rows.push(["Operating Costs", ...annualData.map(r => (-(r.operatingCosts - r.depreciation)).toFixed(0))]);
+    rows.push(["Depreciation", ...annualData.map(r => (-r.depreciation).toFixed(0))]);
+    rows.push(["Total Operating Expenses", ...annualData.map(r => (-r.operatingCosts).toFixed(0))]);
+    rows.push(["EBIT", ...annualData.map(r => r.ebit.toFixed(0))]);
+    rows.push(["Interest Expense", ...annualData.map(r => (-r.interest).toFixed(0))]);
+    rows.push(["Net Income", ...annualData.map(r => r.netIncome.toFixed(0))]);
+    rows.push([]);
+
+    // Cash Flow Statement
+    rows.push(["CASH FLOW STATEMENT"]);
+    rows.push(["", "Year 1", "Year 2", "Year 3", "Year 4", "Year 5"]);
+    rows.push(["Net Income", ...annualData.map(r => r.netIncome.toFixed(0))]);
+    rows.push(["Add: Depreciation", ...annualData.map(r => r.depreciation.toFixed(0))]);
+    rows.push(["Less: Change in WC", ...annualData.map(r => (-r.wcChange).toFixed(0))]);
+    rows.push(["Net Cash from Operations", ...annualData.map(r => r.opCF.toFixed(0))]);
+    rows.push(["Capital Expenditure", ...annualData.map(r => (-r.capEx).toFixed(0))]);
+    rows.push(["Net Cash from Investing", ...annualData.map(r => r.investingCF.toFixed(0))]);
+    rows.push(["Equity Raised", ...annualData.map(r => r.equityFunding.toFixed(0))]);
+    rows.push(["Debt Proceeds", ...annualData.map(r => r.debtFunding.toFixed(0))]);
+    rows.push(["Debt Repayment", ...annualData.map(r => (-r.principalRepayment).toFixed(0))]);
+    rows.push(["Net Cash from Financing", ...annualData.map(r => r.financingCF.toFixed(0))]);
+    rows.push(["Beginning Cash", ...annualData.map(r => r.beginCash.toFixed(0))]);
+    rows.push(["Ending Cash", ...annualData.map(r => r.endCash.toFixed(0))]);
+    rows.push([]);
+
+    // Balance Sheet
+    rows.push(["BALANCE SHEET (END OF YEAR)"]);
+    rows.push(["", "Year 1", "Year 2", "Year 3", "Year 4", "Year 5"]);
+    rows.push(["Cash", ...annualData.map(r => r.endCash.toFixed(0))]);
+    rows.push(["Receivables", ...annualData.map(r => r.receivables.toFixed(0))]);
+    rows.push(["Inventory", ...annualData.map(r => r.inventory.toFixed(0))]);
+    rows.push(["Fixed Assets (NBV)", ...annualData.map(r => r.fixedAssets.toFixed(0))]);
+    rows.push(["Total Assets", ...annualData.map(r => r.totalAssets.toFixed(0))]);
+    rows.push(["Payables", ...annualData.map(r => r.payables.toFixed(0))]);
+    rows.push(["Debt Outstanding", ...annualData.map(r => r.debt.toFixed(0))]);
+    rows.push(["Total Liabilities", ...annualData.map(r => r.totalLiabilities.toFixed(0))]);
+    rows.push(["Equity Invested", ...annualData.map(r => r.equity.toFixed(0))]);
+    rows.push(["Retained Earnings", ...annualData.map(r => r.retainedEarnings.toFixed(0))]);
+    rows.push(["Total Equity", ...annualData.map(r => r.totalEquity.toFixed(0))]);
+
+    // Convert to CSV string
+    const csvContent = rows.map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
+
+    // Trigger download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "financial-projections.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // PDF Export function (uses browser print)
+  const exportPDF = () => {
+    window.print();
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10 }}>
@@ -865,7 +1029,12 @@ function ProjectionsTab({ model }) {
         <Metric label="Debt Outstanding (Y5)" value={fmtC(final?.debtOutstanding||0)} icon="📋" color={final?.debtOutstanding>0?C.warning:C.success} />
       </div>
 
-      <Card>
+      <div className="export-buttons" style={{ display: "flex", gap: 10, marginBottom: 6 }}>
+        <Btn onClick={exportCSV} small>Export CSV</Btn>
+        <Btn onClick={exportPDF} small>Export PDF</Btn>
+      </div>
+
+      <Card className="no-print">
         <Hdr sub="Quarterly revenue, EBIT, and net income (after interest)">P&L Overview</Hdr>
         <ResponsiveContainer width="100%" height={320}>
           <ComposedChart data={qData}>
@@ -883,7 +1052,7 @@ function ProjectionsTab({ model }) {
         </ResponsiveContainer>
       </Card>
 
-      <div className="grid-2-col">
+      <div className="grid-2-col no-print">
         <Card>
           <Hdr sub="Cash position including WC effects and debt service">Cash Flow</Hdr>
           <ResponsiveContainer width="100%" height={260}>
@@ -1115,7 +1284,7 @@ function ProjectionsTab({ model }) {
       {/* Balance Sheet */}
       <Card>
         <Hdr sub="End-of-year balance sheet — Assets = Liabilities + Equity">Balance Sheet</Hdr>
-        <div className="grid-2-col" style={{ marginBottom: 18 }}>
+        <div className="grid-2-col no-print" style={{ marginBottom: 18 }}>
           <div>
             <ResponsiveContainer width="100%" height={260}>
               <BarChart data={annualData} stackOffset="sign">
@@ -1134,12 +1303,13 @@ function ProjectionsTab({ model }) {
           </div>
           <div>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={annualData}>
+              <BarChart data={annualData} stackOffset="sign">
                 <CartesianGrid strokeDasharray="3 3" stroke={C.border} />
                 <XAxis dataKey="year" tick={{ fontSize: 12, fill: C.dim }} />
                 <YAxis tick={{ fontSize: 12, fill: C.dim }} tickFormatter={fmt} />
                 <Tooltip contentStyle={ttStyle} formatter={v=>fmtC(v)} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
+                <ReferenceLine y={0} stroke={C.dim} strokeDasharray="3 3" />
                 <Bar dataKey="payables" name="Payables" stackId="b" fill={C.danger+"90"} />
                 <Bar dataKey="debt" name="Debt" stackId="b" fill={C.warning+"90"} />
                 <Bar dataKey="equity" name="Equity Invested" stackId="b" fill={C.success+"70"} />
@@ -1355,7 +1525,7 @@ function ScenarioTab({ model }) {
 // ─── MONTE CARLO TAB ────────────────────────────────────────────────────────
 function MonteCarloTab({ model }) {
   const [numRuns, setNumRuns] = useState(500);
-  const [vol, setVol] = useState({ growthVol: 30, churnVol: 25, costVol: 15 });
+  const [vol, setVol] = useState({ growthVol: 30, churnVol: 25, priceVol: 20, costVol: 15 });
   const [defThreshold, setDefThreshold] = useState(50);
   const [results, setResults] = useState(null);
   const [running, setRunning] = useState(false);
@@ -1403,10 +1573,14 @@ function MonteCarloTab({ model }) {
             <Slider label="Runs" value={numRuns} onChange={setNumRuns} min={100} max={2000} step={100} suffix="" color={C.accent} />
             <Slider label="Growth Volatility" value={vol.growthVol} onChange={v=>setVol(x=>({...x,growthVol:v}))} min={5} max={80} color={C.success} />
             <Slider label="Churn Volatility" value={vol.churnVol} onChange={v=>setVol(x=>({...x,churnVol:v}))} min={5} max={80} color={C.warning} />
+            <Slider label="Price Volatility" value={vol.priceVol} onChange={v=>setVol(x=>({...x,priceVol:v}))} min={5} max={50} color={C.purple} />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             <Slider label="Cost Volatility" value={vol.costVol} onChange={v=>setVol(x=>({...x,costVol:v}))} min={5} max={50} color={C.danger} />
-            <Slider label="Default Threshold" value={defThreshold} onChange={setDefThreshold} min={20} max={100} suffix="%" color={C.danger} />
+            <div>
+              <Slider label="Default Threshold" value={defThreshold} onChange={setDefThreshold} min={20} max={100} suffix="%" color={C.danger} />
+              <div style={{ fontSize: 11, color: C.dim, marginTop: 4 }}>Fail if cash falls below −{defThreshold}% of total funding</div>
+            </div>
             <Btn onClick={run} disabled={running} primary style={{ width: "100%", padding: "14px", marginTop: 4 }}>
               {running?"Running...": `Run ${numRuns} Simulations ▶`}
             </Btn>
@@ -1492,7 +1666,7 @@ function AboutPanel({ expanded, onToggle, inline }) {
       </button>
       {expanded && (
         <div style={{ padding: "0 18px 18px", fontSize: 13, lineHeight: 1.7, color: C.muted }}>
-          <p style={{ margin: "0 0 12px" }}>An <strong style={{ color: C.text }}>interactive 5-year financial planning tool</strong> for entrepreneurship education, developed by Professor Dimo Dimov. Students build financial models by following a structured four-step process — from revenue decomposition through to funding requirements — and then explore scenarios and run Monte Carlo simulations to stress-test their assumptions.</p>
+          <p style={{ margin: "0 0 12px" }}>An <strong style={{ color: C.text }}>interactive 5-year financial planning tool</strong> for entrepreneurship education. Students build financial models by following a structured four-step process — from revenue decomposition through to funding requirements — and then explore scenarios and run Monte Carlo simulations to stress-test their assumptions.</p>
           <div style={{ fontSize: 14, fontWeight: 600, color: C.text, marginBottom: 8 }}>Pedagogical Framework</div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 10, marginBottom: 14 }}>
             {[
@@ -1521,7 +1695,7 @@ function AboutPanel({ expanded, onToggle, inline }) {
               </div>
             ))}
           </div>
-          <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 10, paddingTop: 10, fontSize: 12, color: C.dim, textAlign: "center" }}>&copy; Professor Dimo Dimov 2026</div>
+          <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 10, paddingTop: 10, fontSize: 12, color: C.dim, textAlign: "center" }}>Dimo Dimov | Entrepreneurial Finance Tools</div>
         </div>
       )}
     </div>

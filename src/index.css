@@ -323,3 +323,43 @@ body {
   background: rgba(0,0,0,0.15);
   border-radius: 3px;
 }
+
+/* Print styles for PDF export */
+@media print {
+  /* Hide non-essential UI elements */
+  .app-header,
+  .tab-nav,
+  .export-buttons,
+  .no-print,
+  button {
+    display: none !important;
+  }
+
+  /* Reset page layout */
+  body {
+    background: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .main-content {
+    padding: 0 !important;
+  }
+
+  /* Ensure content fits on page */
+  * {
+    box-shadow: none !important;
+  }
+
+  /* Page breaks */
+  .card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 16px !important;
+  }
+
+  /* Make tables readable */
+  table {
+    font-size: 11px !important;
+  }
+}
