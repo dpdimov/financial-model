@@ -1723,6 +1723,48 @@ export default function FinancialModelSimulator() {
     setTmplKey(key); setTab("builder");
   };
 
+  // Save model to JSON file
+  const saveModel = () => {
+    const exportData = {
+      version: "1.0",
+      savedAt: new Date().toISOString(),
+      templateKey: tmplKey,
+      model: model,
+    };
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `financial-model-${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Load model from JSON file
+  const loadModel = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (data.model) {
+          setModel(data.model);
+          setTmplKey(data.templateKey || null);
+          setTab("builder");
+        } else {
+          alert("Invalid model file format");
+        }
+      } catch (err) {
+        alert("Failed to parse model file: " + err.message);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ""; // Reset so same file can be loaded again
+  };
+
   if (!model) {
     return (
       <div style={{ background: C.bg, minHeight: "100vh", color: C.text, fontFamily: fonts, padding: "40px 24px" }}>
@@ -1746,6 +1788,13 @@ export default function FinancialModelSimulator() {
             </div>
           </div>
           <TemplateSelector onSelect={selectTemplate} />
+          <div style={{ textAlign: "center", marginTop: 24, paddingTop: 24, borderTop: `1px solid ${C.border}` }}>
+            <p style={{ fontSize: 14, color: C.dim, marginBottom: 12 }}>Or load a previously saved model:</p>
+            <label style={{ display: "inline-block", background: C.card, border: `1px solid ${C.border}`, borderRadius: 8, padding: "10px 20px", color: C.text, fontSize: 14, cursor: "pointer", fontWeight: 500 }}>
+              Load Saved Model
+              <input type="file" accept=".json" onChange={loadModel} style={{ display: "none" }} />
+            </label>
+          </div>
         </div>
       </div>
     );
@@ -1760,8 +1809,13 @@ export default function FinancialModelSimulator() {
           {tmplKey && <span className="hide-mobile" style={{ fontSize: 13, color: C.dim, padding: "2px 8px", background: C.bg, borderRadius: 4 }}>{TEMPLATES[tmplKey]?.icon} {TEMPLATES[tmplKey]?.name}</span>}
         </div>
         <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+          <button onClick={saveModel} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 13, cursor: "pointer" }}>Save</button>
+          <label style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 13, cursor: "pointer" }}>
+            Load
+            <input type="file" accept=".json" onChange={loadModel} style={{ display: "none" }} />
+          </label>
           <button onClick={() => setAboutModalOpen(o => !o)} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 13, cursor: "pointer" }}>About</button>
-          <button onClick={() => { setModel(null); setTmplKey(null); setTab("builder"); }} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 13, cursor: "pointer" }}>↩ New Model</button>
+          <button onClick={() => { setModel(null); setTmplKey(null); setTab("builder"); }} style={{ background: "transparent", border: `1px solid ${C.border}`, borderRadius: 7, padding: "5px 12px", color: C.muted, fontSize: 13, cursor: "pointer" }}>↩ New</button>
         </div>
       </div>
       {aboutModalOpen && (
